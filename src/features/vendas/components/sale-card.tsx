@@ -17,11 +17,11 @@ export const SaleCard = ({ sale }: Porops) => {
   return (
     <TouchableOpacity
       onPress={navigate}
-      className="flex-row items-center px-4 py-4"
+      className="flex-row items-center px-4 py-4 bg-slate-200 rounded-xl"
     >
       {/* ÍCONE */}
 
-      <View className="mr-3 h-11 w-11 items-center justify-center rounded-xl bg-green-50">
+      <View className="mr-3 h-11 w-11 items-center justify-center rounded-xl bg-primary">
         <Text className="text-xl">🧾</Text>
       </View>
 

@@ -21,7 +21,7 @@ export const TotalCard = ({
   const { lang } = useLanguageStore();
 
   return (
-    <View className="mx-5 mt-6 rounded-3xl bg-primary p-4">
+    <View className="mx-5 mb-6 rounded-3xl bg-primary p-4">
       <View className="flex-row items-center justify-between">
         <View>
           <Text className="text-sm text-white/70">{t("Saletotal", lang)}</Text>

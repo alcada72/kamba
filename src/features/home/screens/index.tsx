@@ -19,9 +19,9 @@ import { useSQLiteContext } from "expo-sqlite";
 import { UserRepository } from "@/features/profile/repositories/userrepositories";
 import { User } from "@/features/profile/types/user";
 import formatCurrency from "@/shared/format-currecy";
-import formatDate from "@/shared/formate-date";
 import { FastAcessItem } from "../components/falstAcess-item";
 import { HomeHeader } from "../components/header";
+import { SaleCardHome } from "../components/sale-card";
 
 export default function HomeScreen() {
   const { lang } = useLanguageStore();
@@ -167,7 +167,7 @@ export default function HomeScreen() {
 
             {recentSales.length > 0 && (
               <Pressable onPress={() => router.navigate("/(private)/vendas")}>
-                <Text className="text-sm font-semibold text-primary">
+                <Text className="text-xl font-semibold text-primary">
                   {t("viewAll", lang)}
                 </Text>
               </Pressable>
@@ -193,45 +193,11 @@ export default function HomeScreen() {
           {!loading && recentSales.length > 0 && (
             <View className="overflow-hidden rounded-2xl border border-border bg-surface">
               {recentSales.map((sale, index) => (
-                <View key={sale.id}>
-                  <View className="flex-row items-center px-4 py-4">
-                    {/* ÍCONE */}
-
-                    <View className="mr-3 h-11 w-11 items-center justify-center rounded-xl bg-green-50">
-                      <Text className="text-xl">🧾</Text>
-                    </View>
-
-                    {/* INFORMAÇÃO */}
-
-                    <View className="flex-1">
-                      <Text className="font-semibold text-text">
-                        {lang === "pt"
-                          ? `Venda #${sale.id}`
-                          : `Sale #${sale.id}`}
-                      </Text>
-
-                      <Text className="mt-1 text-xs text-textSecondary">
-                        {formatDate(sale.data_venda)}
-                      </Text>
-                    </View>
-
-                    {/* TOTAL */}
-
-                    <View className="items-end">
-                      <Text className="font-bold text-primary">
-                        {formatCurrency(sale.total)}
-                      </Text>
-
-                      <Text className="mt-1 text-xs text-textMuted">
-                        {sale.status}
-                      </Text>
-                    </View>
-                  </View>
-
-                  {index < recentSales.length - 1 && (
-                    <View className="ml-4 h-px bg-border" />
-                  )}
-                </View>
+                <SaleCardHome
+                  key={sale.id}
+                  sale={sale}
+                  showBorder={index < recentSales.length - 1}
+                />
               ))}
             </View>
           )}

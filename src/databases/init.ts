@@ -2,7 +2,7 @@ import { SQLiteDatabase } from "expo-sqlite";
 import { migrateV1 } from "./migrations/v1";
 import { migrateV2 } from "./migrations/v2";
 
-const DATABASE_VERSION = 1;
+const DATABASE_VERSION = 2;
 
 export async function InitDatabase(db: SQLiteDatabase) {
   const { user_version } = (await db.getFirstAsync<{ user_version: number }>(
@@ -20,7 +20,7 @@ export async function InitDatabase(db: SQLiteDatabase) {
     await migrateV2(db);
     currentDbVersion = 2;
   }
-  
+
   /*
    * Futuras migrations:
    *

@@ -38,17 +38,13 @@ export default function VendasScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      <View className="bg-primary flex-row items-center gap-2">
+      <View className="bg-primary py-5 flex-row items-center gap-2">
         <Pressable onPress={() => router.back()}>
-          <Feather name="chevron-left" color={colors.secondary} size={25} />
+          <Feather name="chevron-left" color={colors.secondary} size={30} />
         </Pressable>
-        <View className="pt-6 pb-8 pr-5">
+        <View className=" pr-5">
           <Text className="text-3xl font-bold text-secondary">
-            {t("settings", lang)}
-          </Text>
-
-          <Text className="hidden text-base text-textSecondary">
-            {t("customizeExperience", lang)}
+            {t("sale", lang)}s
           </Text>
         </View>
       </View>
@@ -81,7 +77,7 @@ export default function VendasScreen() {
           )}
 
           {!loading && recentSales.length > 0 && (
-            <View className="overflow-hidden">
+            <View className="overflow-hidden gap-2">
               {recentSales.map((sale, index) => (
                 <SaleCard sale={sale} key={sale.id} />
               ))}

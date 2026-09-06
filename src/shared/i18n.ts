@@ -17,6 +17,10 @@ const translations = {
     menu: "Menu",
     newSold: "New Sold",
     quickAccess: "Quick access",
+    invoiceNumber: "Invoice Number",
+    invoice: "Invoice",
+    sale: "Sale",
+    statusSale: "Status Sale",
     newSale: "New sale",
     newProduct: "New Product",
     products: "Products",
@@ -33,6 +37,7 @@ const translations = {
     CompleteSale: "Complete sale",
     Saletotal: "Sale total",
     cadProdut: "Cadastre um novo produto",
+
     // Actions
     save: "Save",
     cancel: "Cancel",
@@ -129,12 +134,17 @@ const translations = {
     menu: "Menu",
     newSold: "Nova venda",
     quickAccess: "Acesso rápido",
+    sale: "Venda",
+    statusSale: "Status da venda",
     newSale: "Nova venda",
     newProduct: "Novo Produto",
     products: "Produtos",
     product: "Produto",
     customers: "Clientes",
     reports: "Relatórios",
+    invoice: "Fatura",
+    invoiceNumber: "Número da fatura",
+
     summary: "Resumo",
     todaysSales: "Vendas hoje",
     recentSales: "Vendas recentes",
@@ -221,7 +231,6 @@ const translations = {
     version: "Versão",
   },
 } satisfies Record<langs, Dictionary>;
-
 
 export type TranslationKey = keyof typeof translations.en;
 

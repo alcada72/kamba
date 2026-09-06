@@ -209,6 +209,67 @@ export default function SoldScreen() {
     setProducts((current) => current.filter((product) => product.id !== id));
   };
 
+  const addQdt = async (id: number | string) => {
+    const product = await productRepository.findById(Number(id));
+    if (!product) return;
+
+    setProducts((current) => {
+      const existing = current.find((item) => item.id === product.id);
+
+      if (!existing) {
+        return [
+          ...current,
+          {
+            id: product.id,
+            barcode: product.codigo_barras,
+            name: product.nome,
+            price: product.preco,
+            quantity: 1,
+          },
+        ];
+      }
+
+      if (existing.quantity >= product.estoque) {
+        return current;
+      }
+
+      return current.map((item) =>
+        item.id === product.id
+          ? {
+              ...item,
+              quantity: item.quantity + 1,
+            }
+          : item,
+      );
+    });
+  };
+
+  const rmQdt = async (id: number | string) => {
+    const product = await productRepository.findById(Number(id));
+    if (!product) return;
+
+    setProducts((current) => {
+      const existing = current.find((item) => item.id === product.id);
+
+      if (!existing) {
+        return current;
+      }
+
+      if (existing.quantity <= 1) {
+        return current.filter((item) => item.id !== product.id);
+      }
+
+      return current.map((item) =>
+        item.id === product.id
+          ? {
+              ...item,
+              quantity: item.quantity - 1,
+            }
+          : item,
+      );
+    });
+  };
+
   const clearCart = () => {
     setProducts([]);
   };
@@ -372,6 +433,8 @@ export default function SoldScreen() {
       {/* PRODUTOS */}
       <ListProdutsCart
         removeProduct={(id) => removeProduct(Number(id))}
+        rmQtd={(id) => rmQdt(id)}
+        addQtd={(id) => addQdt(id)}
         products={products}
       />
 

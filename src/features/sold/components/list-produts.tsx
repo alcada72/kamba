@@ -1,15 +1,22 @@
-import formatCurrency from "@/shared/format-currecy";
 import { t } from "@/shared/i18n";
 import { useLanguageStore } from "@/store/i18n.store";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { CartProduct } from "../types/sold";
+import ListProdutCart from "./list-produt-card";
 
 interface Props {
   removeProduct: (id: number | string) => void;
+  rmQtd: (id: number | string) => void;
+  addQtd: (id: number | string) => void;
   products: CartProduct[];
 }
 
-export const ListProdutsCart = ({ products, removeProduct }: Props) => {
+export const ListProdutsCart = ({
+  products,
+  removeProduct,
+  addQtd,
+  rmQtd,
+}: Props) => {
   const lang = useLanguageStore((state) => state.lang);
 
   return (
@@ -47,46 +54,14 @@ export const ListProdutsCart = ({ products, removeProduct }: Props) => {
         ) : (
           <View className="overflow-hidden rounded-2xl border border-border bg-surface">
             {products.map((product, index) => (
-              <View key={product.id}>
-                <View className="flex-row items-center px-4 py-4">
-                  <View className="mr-3 h-12 w-12 items-center justify-center rounded-xl bg-green-50">
-                    <Text className="text-xl">📦</Text>
-                  </View>
-
-                  <View className="flex-1">
-                    <Text className="font-semibold text-text">
-                      {product.name}
-                    </Text>
-
-                    <Text className="mt-1 text-xs text-textMuted">
-                      {product.barcode ?? "-"}
-                    </Text>
-
-                    <Text className="mt-1 text-sm text-textSecondary">
-                      {product.quantity} × {formatCurrency(product.price)}
-                    </Text>
-                  </View>
-
-                  <View className="items-end">
-                    <Text className="font-bold text-primary">
-                      {(product.price * product.quantity).toFixed(2)} Kz
-                    </Text>
-
-                    <Pressable
-                      onPress={() => removeProduct(product.id)}
-                      className="mt-2"
-                    >
-                      <Text className="text-xs font-semibold text-error">
-                        {t("remove", lang)}
-                      </Text>
-                    </Pressable>
-                  </View>
-                </View>
-
-                {index < products.length - 1 && (
-                  <View className="ml-4 h-px bg-border" />
-                )}
-              </View>
+              <ListProdutCart
+                key={product.id}
+                product={product}
+                removeProduct={() => removeProduct(product.id)}
+                showBorder={index < products.length - 1}
+                addQtd={() => addQtd?.(product.id)}
+                rmQtd={() => rmQtd?.(product.id)}
+              />
             ))}
           </View>
         )}

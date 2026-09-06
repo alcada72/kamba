@@ -1,5 +1,7 @@
 import formatCurrency from "@/shared/format-currecy";
 import formatDate from "@/shared/formate-date";
+import { t } from "@/shared/i18n";
+import { useLanguageStore } from "@/store/i18n.store";
 import colors from "@/theme/colos";
 import { Feather } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
@@ -17,6 +19,7 @@ import { Venda } from "../types";
 
 export default function VendasDetalisScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const lang = useLanguageStore((stt) => stt.lang);
   const db = useSQLiteContext();
   const vendasRepository = new VendasRepository(db);
 
@@ -67,7 +70,7 @@ export default function VendasDetalisScreen() {
           onPress={() => router.back()}
           className="mt-6 bg-primary px-6 py-3 rounded-xl"
         >
-          <Text className="text-white font-bold">Voltar</Text>
+          <Text className="text-white font-bold">{t("back", lang)}</Text>
         </Pressable>
       </View>
     );
@@ -75,41 +78,40 @@ export default function VendasDetalisScreen() {
 
   return (
     <View className="flex-1 bg-background">
+      {/* HEADER */}
+      <View className="py-2 bg-primary">
+        <View className="flex-row items-center">
+          <Pressable
+            onPress={() => router.back()}
+            className=" rounded-full bg-card items-center justify-center"
+          >
+            <Feather name="chevron-left" size={30} color={colors.secondary} />
+          </Pressable>
+
+          <View className="ml-3">
+            <Text className="text-2xl font-bold text-secondary">
+              {t("sale", lang)} #{vendaData.id}
+            </Text>
+
+            <Text className="text-sm text-textSecondary mt-1">
+              {formatDate(vendaData.data_venda)}
+            </Text>
+          </View>
+        </View>
+      </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingBottom: 40,
         }}
       >
-        {/* HEADER */}
-        <View className="px-5 pt-6">
-          <View className="flex-row items-center">
-            <Pressable
-              onPress={() => router.back()}
-              className="w-10 h-10 rounded-full bg-card items-center justify-center"
-            >
-              <Feather name="chevron-left" size={24} color={colors.primary} />
-            </Pressable>
-
-            <View className="ml-3">
-              <Text className="text-2xl font-bold text-primary">
-                Venda #{vendaData.id}
-              </Text>
-
-              <Text className="text-sm text-textSecondary mt-1">
-                {formatDate(vendaData.data_venda)}
-              </Text>
-            </View>
-          </View>
-        </View>
-
         {/* STATUS */}
         <View className="px-5 mt-6">
           <View className="bg-card rounded-2xl p-5">
             <View className="flex-row items-center justify-between">
               <View>
                 <Text className="text-sm text-textSecondary">
-                  Status da venda
+                  {t("statusSale", lang)}
                 </Text>
 
                 <Text className="text-xl font-bold text-primary mt-1">
@@ -126,9 +128,11 @@ export default function VendasDetalisScreen() {
 
         {/* PRODUTOS */}
         <View className="px-5 mt-6">
-          <Text className="text-lg font-bold text-primary mb-3">Produtos</Text>
+          <Text className="text-lg font-bold text-primary mb-3">
+            {t("products", lang)}
+          </Text>
 
-          <View className="bg-card rounded-2xl overflow-hidden">
+          <View className="overflow-hidden rounded-2xl border border-border bg-surface">
             {vendaData.itens.map((item, index) => (
               <View
                 key={item.id}
@@ -138,7 +142,7 @@ export default function VendasDetalisScreen() {
                     : ""
                 }`}
               >
-                <View className="flex-row justify-between">
+                <View className="flex-row justify-between pb {index < vendaData.itens.length - 1 && (">
                   <View className="flex-1 pr-4">
                     <Text
                       className="text-base font-bold text-primary"
@@ -156,6 +160,9 @@ export default function VendasDetalisScreen() {
                     {formatCurrency(item.subtotal)}
                   </Text>
                 </View>
+                {index < vendaData.itens.length - 1 && (
+                  <View className="ml-4 h-px bg-border pt-1" />
+                )}
               </View>
             ))}
           </View>
@@ -163,7 +170,9 @@ export default function VendasDetalisScreen() {
 
         {/* RESUMO */}
         <View className="px-5 mt-6">
-          <Text className="text-lg font-bold text-primary mb-3">Resumo</Text>
+          <Text className="text-lg font-bold text-primary mb-3">
+            {t("summary", lang)}
+          </Text>
 
           <View className="bg-card rounded-2xl p-5">
             <View className="flex-row justify-between mb-3">
@@ -195,13 +204,15 @@ export default function VendasDetalisScreen() {
         {/* FATURA */}
         {vendaData.fatura && (
           <View className="px-5 mt-6">
-            <Text className="text-lg font-bold text-primary mb-3">Fatura</Text>
+            <Text className="text-lg font-bold text-primary mb-3">
+              {t("invoice", lang)}
+            </Text>
 
             <View className="bg-card rounded-2xl p-5">
               <View className="flex-row justify-between items-center">
                 <View>
                   <Text className="text-sm text-textSecondary">
-                    Número da fatura
+                    {t("invoiceNumber", lang)}
                   </Text>
 
                   <Text className="text-lg font-bold text-primary mt-1">
