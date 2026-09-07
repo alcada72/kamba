@@ -68,7 +68,8 @@ const translations = {
     rememberMe: "Remember me",
     signIn: "Sign in",
     signUp: "Sign up",
-
+    signInWithGoogle: "signIn With Google",
+    continueWithGoogle: "continue With Google",
     // User
     name: "Name",
     firstName: "First name",
@@ -184,6 +185,8 @@ const translations = {
     rememberMe: "Lembrar-me",
     signIn: "Entrar",
     signUp: "Criar conta",
+    signInWithGoogle: "Entre com a Google",
+    continueWithGoogle: "Continuar com o Google",
 
     name: "Nome",
     firstName: "Nome próprio",

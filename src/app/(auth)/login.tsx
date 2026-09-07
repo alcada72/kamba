@@ -1,10 +1,3 @@
-import React from "react";
-import { Text, View } from "react-native";
+import LoginScreen from "@/features/auth/screens/login";
 
-export default function Page() {
-  return (
-    <View>
-      <Text>Page ola mundo</Text>
-    </View>
-  );
-}
+export default LoginScreen;
