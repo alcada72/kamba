@@ -70,6 +70,8 @@ const translations = {
     signUp: "Sign up",
     signInWithGoogle: "signIn With Google",
     continueWithGoogle: "continue With Google",
+    enterPin: "Enter your Kamba pin",
+
     // User
     name: "Name",
     firstName: "First name",
@@ -118,6 +120,7 @@ const translations = {
     about: "About",
     terms: "Terms and conditions",
     privacy: "Privacy policy",
+    security: "Security",
     customizeExperience: "Customize your experience.",
     version: "Version",
   },
@@ -187,6 +190,7 @@ const translations = {
     signUp: "Criar conta",
     signInWithGoogle: "Entre com a Google",
     continueWithGoogle: "Continuar com o Google",
+    enterPin: "Adciona o seu pin do Kamba",
 
     name: "Nome",
     firstName: "Nome próprio",
@@ -230,6 +234,7 @@ const translations = {
     about: "Sobre",
     terms: "Termos e condições",
     privacy: "Política de privacidade",
+    security: "Segurança",
     customizeExperience: "Personalize a sua experiência.",
     version: "Versão",
   },

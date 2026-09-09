@@ -6,7 +6,7 @@ import { router } from "expo-router";
 import { useState } from "react";
 import { Pressable, Text, TouchableOpacity, View } from "react-native";
 
-export function HeaderProfile() {
+export const GeneralProfileHeader = () => {
   const lang = useLanguageStore((store) => store.lang);
   const [showOptions, setshowOptions] = useState(false);
 
@@ -71,4 +71,4 @@ export function HeaderProfile() {
       </View>
     </View>
   );
-}
+};

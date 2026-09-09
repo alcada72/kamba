@@ -16,7 +16,7 @@ import {
 } from "@/features/home/repositories/dashboardRepository";
 import { useSQLiteContext } from "expo-sqlite";
 
-import { UserRepository } from "@/features/profile/repositories/userrepositories";
+import { UserRepository } from "@/features/profile/repositories/userRepositories";
 import { User } from "@/features/profile/types/user";
 import formatCurrency from "@/shared/format-currecy";
 import { FastAcessItem } from "../components/falstAcess-item";
@@ -56,7 +56,7 @@ export default function HomeScreen() {
       const [summary, sales, user] = await Promise.all([
         dashboardRepository.getSummary(),
         dashboardRepository.getRecentSales(15),
-        userRepository.getFristUser(),
+        userRepository.getFrist(),
       ]);
 
       setTodaySalesTotal(summary.todaySalesTotal);

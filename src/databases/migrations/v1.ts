@@ -10,8 +10,11 @@ export async function migrateV1(db: SQLiteDatabase) {
     -- =========================================
     CREATE TABLE IF NOT EXISTS usuarios (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
+      external_id TEXT,
       nome TEXT NOT NULL,
       senha TEXT NOT NULL,
+      email TEXT,
+      photo TEXT,
       telefone TEXT
     );
 
