@@ -1,10 +1,3 @@
-import React from "react";
-import { Text, View } from "react-native";
+import EditProfileScreen from "@/features/profile/screens/editProfileEcreen";
 
-export default function Page() {
-  return (
-    <View>
-      <Text>Page</Text>
-    </View>
-  );
-}
+export default EditProfileScreen;

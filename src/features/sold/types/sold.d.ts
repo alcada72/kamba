@@ -1,37 +1,36 @@
-export interface SaleCartItem {
+import { PaymentMethod } from "@/shared/types/PaymentMethod";
+
+export type SaleCartItem = {
   productId: number;
   quantity: number;
-}
+};
 
-export type PaymentMethod = "dinheiro" | "cartao" | "transferencia" | "pix";
-
-export interface CreateSaleDTO {
+export type CreateSaleDTO = {
   items: SaleCartItem[];
   desconto?: number;
   pagamento: {
     metodo: PaymentMethod;
     valor: number;
   };
-}
+};
 
-export interface SaleResult {
+export type SaleResult = {
   saleId: number;
   total: number;
-}
+};
 
-export interface RecentSale {
+export type RecentSale = {
   id: number;
   total: number;
   desconto: number;
   status: string;
   data_venda: string;
-}
+};
 
-
-export interface CartProduct {
+export type CartProduct = {
   id: number;
   barcode: string | null;
   name: string;
   price: number;
   quantity: number;
-}
+};

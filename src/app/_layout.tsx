@@ -12,25 +12,24 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import "./global.css";
 
 GoogleSignin.configure({
-  webClientId: "autoDetect",
+  webClientId:
+    "856020489210-0fb7trui84gvjiskt11uog3cvucpcual.apps.googleusercontent.com",
   scopes: ["https://www.googleapis.com/auth/drive.appdata"],
   offlineAccess: false,
 });
 
 export default function RootLayout() {
-  const { isLogged, isTrunckedApp } = useAuthState();
+  const { isLogged, isTrunckedApp, activeTrunckedApp } = useAuthState();
 
   const segments = useSegments();
 
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    // Espera o Zustand terminar de hidratar
     const unsubscribe = useAuthState.persist.onFinishHydration(() => {
       setIsReady(true);
     });
 
-    // Caso já esteja hidratado
     if (useAuthState.persist.hasHydrated()) {
       setIsReady(true);
     }
@@ -49,22 +48,20 @@ export default function RootLayout() {
       if (currentGroup !== "(auth)") {
         router.replace("/(auth)");
       }
-
       return;
     }
 
-    if (isTrunckedApp) {
+    if (isTrunckedApp || activeTrunckedApp) {
       if (segments[1] !== "truncked") {
         router.replace("/(auth)/truncked");
       }
-
       return;
     }
 
     if (currentGroup !== "(private)") {
       router.replace("/(private)");
     }
-  }, [isReady, isLogged, isTrunckedApp, segments]);
+  }, [isReady, isLogged, isTrunckedApp, segments, activeTrunckedApp]);
 
   if (!isReady) {
     return <SuspenseComponent />;
@@ -105,8 +102,6 @@ export default function RootLayout() {
 function SuspenseComponent() {
   return (
     <View className="flex-1 items-center justify-center gap-4 bg-primary">
-      <StatusBar style="light" />
-
       <Image
         source={assetsPath.logo}
         style={{

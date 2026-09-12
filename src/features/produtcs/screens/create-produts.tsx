@@ -56,7 +56,6 @@ export default function CreateProductScreen() {
     if (id) loadProduct();
   }, [id]);
 
-  // Carrega e preenche os campos com os dados existentes para edição
   async function loadProduct() {
     try {
       setLoading(true);

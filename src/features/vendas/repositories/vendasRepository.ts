@@ -99,6 +99,7 @@ export class VendasRepository {
         ? {
             id: first.fatura_id,
             numero: first.fatura_numero,
+            venda_id: first.venda_id,
             fatura_json: JSON.parse(first.fatura_json),
           }
         : null,

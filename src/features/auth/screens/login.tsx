@@ -1,10 +1,10 @@
 import { UserRepository } from "@/features/profile/repositories/userRepositories";
 import { assetsPath } from "@/shared/assets";
+import { LoandingModal } from "@/shared/components/loading-modal";
 import { t } from "@/shared/i18n";
 import { useLanguageStore } from "@/store/i18n.store";
 import colors from "@/theme/colos";
 import { FontAwesome } from "@expo/vector-icons";
-import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -16,6 +16,7 @@ export default function LoginScreen() {
   const lang = useLanguageStore((stt) => stt.lang);
   const { setLogged } = useAuthState();
   const [isLoading, setisLoading] = useState(false);
+  const [message, setmessage] = useState("");
 
   const db = useSQLiteContext();
 
@@ -24,24 +25,30 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     setisLoading(true);
+    setLogged(true);
+
     try {
       const res = await externalAuthService.login();
-      console.log(res);
+      console.log("Response", res);
       const user = res?.user;
-      if (user) {
-        await userRepository.update(
-          {
-            external_id: user.id,
-            nome: user.name,
-            photo: user.photo,
-            email: user.email,
-          },
-          1,
-        );
+      if (!user) return;
+      const creted = await userRepository.update(
+        {
+          external_id: user.id,
+          nome: user.name,
+          photo: user.photo,
+          email: user.email,
+        },
+        1,
+      );
+      console.log(creted);
+
+      if (creted?.lastInsertRowId) {
         setLogged(true);
       }
     } catch (error) {
       console.log("Error login", error);
+      setmessage("Verrifica a sua conexão a internet");
     } finally {
       setisLoading(false);
     }
@@ -49,41 +56,36 @@ export default function LoginScreen() {
 
   return (
     <View className="flex-1 bg-primary px-6">
-      {/* Logo */}
-      <View className="pt-16 items-center">
-        <Image
-          source={assetsPath.kamba_logo_green}
-          style={{ width: 80, height: 80 }}
-          resizeMode="contain"
-        />
+      <View className="flex-1 items-center justify-start">
+        <View className="items-center pt-16">
+          <Image
+            source={assetsPath.kamba_logo_gold}
+            style={{
+              width: 200,
+              height: 80,
+            }}
+            resizeMode="contain"
+          />
+        </View>
+
+        <View className=" items-center justify-center">
+          <Text className="text-center text-3xl font-bold text-white">
+            {t("welcome", lang)}
+          </Text>
+        </View>
       </View>
-
       {/* Content */}
-      <View className="flex-1 items-center justify-center">
-        <Text className="text-3xl font-bold text-white text-center">
-          {t("welcome", lang)}
-        </Text>
-        <Text className="text-base text-white/70 text-center mt-3 mb-10">
-          {t("signInWithGoogle", lang)}
-        </Text>
-
-        {/* Google Login */}
-        <GoogleSigninButton
-          size={GoogleSigninButton.Size.Wide}
-          color={GoogleSigninButton.Color.Dark}
-          onPress={handleLogin}
-          disabled={isLoading}
-        />
+      <View className="flex-1 items-center justify-center px-5">
         <TouchableOpacity
           activeOpacity={0.8}
           disabled={isLoading}
           onPress={handleLogin}
-          className="w-full bg-white rounded-2xl p-4 flex-row items-center justify-center"
+          className="w-full bg-background rounded-2xl p-4 flex-row items-center justify-center"
         >
           <FontAwesome name="google" size={22} color={colors.blue} />
 
           <Text className="text-base font-bold text-gray-800 ml-3">
-            {t("signInWithGoogle", lang)}
+            {t("continueWithGoogle", lang)}
           </Text>
         </TouchableOpacity>
       </View>
@@ -94,6 +96,8 @@ export default function LoginScreen() {
           {t("continueWithGoogle", lang)}
         </Text>
       </View>
+
+      <LoandingModal visible={isLoading} />
     </View>
   );
 }

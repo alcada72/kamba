@@ -56,7 +56,7 @@ export default function HomeScreen() {
       const [summary, sales, user] = await Promise.all([
         dashboardRepository.getSummary(),
         dashboardRepository.getRecentSales(15),
-        userRepository.getFrist(),
+        userRepository.getFrist(1),
       ]);
 
       setTodaySalesTotal(summary.todaySalesTotal);
@@ -64,6 +64,7 @@ export default function HomeScreen() {
       setTodaySalesCount(summary.todaySalesCount);
 
       setTotalProducts(summary.totalProducts);
+
       setUserData(user);
       setRecentSales(sales);
     } catch (error) {

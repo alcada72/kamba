@@ -1,4 +1,4 @@
-import { BackupAdapter } from "./types/backup";
+import { BackupAdapter } from "../types/backup";
 
 export class BackupService {
   constructor(private readonly adapter: BackupAdapter) {}

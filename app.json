@@ -8,22 +8,49 @@
     "scheme": "kamba",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+
     "ios": {
       "supportsTablet": true
     },
+
     "android": {
       "googleServicesFile": "./google-services.json",
+      "package": "com.alcada.kilundica.kamba",
+
       "adaptiveIcon": {
         "backgroundColor": "#063023",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
+
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+
+      "permissions": [
+        "CAMERA",
+        "INTERNET",
+        "READ_EXTERNAL_STORAGE",
+        "RECORD_AUDIO",
+        "SYSTEM_ALERT_WINDOW",
+        "VIBRATE",
+        "WRITE_EXTERNAL_STORAGE",
+
+        "BLUETOOTH",
+        "BLUETOOTH_ADMIN",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "BLUETOOTH_SCAN",
+        "BLUETOOTH_CONNECT",
+        "BLUETOOTH_ADVERTISE"
+      ]
     },
+
     "plugins": [
+      "./plugins/withBluetoothPermissions",
+
       "expo-router",
+
       [
         "expo-splash-screen",
         {
@@ -33,6 +60,7 @@
           "backgroundColor": "#063023"
         }
       ],
+
       [
         "expo-camera",
         {
@@ -41,6 +69,7 @@
           "recordAudioAndroid": true
         }
       ],
+
       [
         "expo-secure-store",
         {
@@ -48,15 +77,18 @@
           "faceIDPermission": "Allow $(PRODUCT_NAME) to access your Face ID biometric data."
         }
       ],
+
       [
         "expo-sqlite",
         {
           "enableFTS": true,
           "useSQLCipher": true,
+
           "android": {
             "enableFTS": false,
             "useSQLCipher": false
           },
+
           "ios": {
             "customBuildFlags": [
               "-DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_ENABLE_SNAPSHOT=1"
@@ -64,8 +96,10 @@
           }
         }
       ],
+
       ["@react-native-google-signin/google-signin"]
     ],
+
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true

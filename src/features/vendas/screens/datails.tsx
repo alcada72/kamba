@@ -1,3 +1,4 @@
+import { GeneralHeader } from "@/shared/components/general_header";
 import formatCurrency from "@/shared/format-currecy";
 import formatDate from "@/shared/formate-date";
 import { t } from "@/shared/i18n";
@@ -12,6 +13,7 @@ import {
   Pressable,
   ScrollView,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 import { VendasRepository } from "../repositories/vendasRepository";
@@ -51,26 +53,28 @@ export default function VendasDetalisScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 bg-background items-center justify-center">
-        <ActivityIndicator size="large" color={colors.primary} />
+      <View className="flex-1 bg-primary items-center justify-center">
+        <ActivityIndicator size="large" color={colors.secondary} />
       </View>
     );
   }
 
   if (!vendaData) {
     return (
-      <View className="flex-1 bg-background items-center justify-center px-6">
+      <View className="flex-1 bg-primary items-center justify-center px-6">
         <Feather name="file-text" size={48} color={colors.textSecondary} />
 
-        <Text className="text-xl font-bold text-primary mt-4">
+        <Text className="text-xl font-bold text-secondary mt-4">
           Venda não encontrada
         </Text>
 
         <Pressable
           onPress={() => router.back()}
-          className="mt-6 bg-primary px-6 py-3 rounded-xl"
+          className="mt-6 bg-text px-6 py-3 rounded-xl"
         >
-          <Text className="text-white font-bold">{t("back", lang)}</Text>
+          <Text className="text-textSecondary font-bold">
+            {t("back", lang)}
+          </Text>
         </Pressable>
       </View>
     );
@@ -79,26 +83,17 @@ export default function VendasDetalisScreen() {
   return (
     <View className="flex-1 bg-background">
       {/* HEADER */}
-      <View className="py-2 bg-primary">
-        <View className="flex-row items-center">
-          <Pressable
-            onPress={() => router.back()}
-            className=" rounded-full bg-card items-center justify-center"
-          >
-            <Feather name="chevron-left" size={30} color={colors.secondary} />
-          </Pressable>
+      <GeneralHeader>
+        <View className="ml-3">
+          <Text className="text-2xl font-bold text-secondary">
+            {t("sale", lang)} #{vendaData.id}
+          </Text>
 
-          <View className="ml-3">
-            <Text className="text-2xl font-bold text-secondary">
-              {t("sale", lang)} #{vendaData.id}
-            </Text>
-
-            <Text className="text-sm text-textSecondary mt-1">
-              {formatDate(vendaData.data_venda)}
-            </Text>
-          </View>
+          <Text className="text-sm text-textSecondary mt-1">
+            {formatDate(vendaData.data_venda)}
+          </Text>
         </View>
-      </View>
+      </GeneralHeader>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
@@ -142,7 +137,7 @@ export default function VendasDetalisScreen() {
                     : ""
                 }`}
               >
-                <View className="flex-row justify-between pb {index < vendaData.itens.length - 1 && (">
+                <View className="flex-row justify-between ">
                   <View className="flex-1 pr-4">
                     <Text
                       className="text-base font-bold text-primary"
@@ -160,9 +155,6 @@ export default function VendasDetalisScreen() {
                     {formatCurrency(item.subtotal)}
                   </Text>
                 </View>
-                {index < vendaData.itens.length - 1 && (
-                  <View className="ml-4 h-px bg-border pt-1" />
-                )}
               </View>
             ))}
           </View>
@@ -220,9 +212,19 @@ export default function VendasDetalisScreen() {
                   </Text>
                 </View>
 
-                <View className="w-10 h-10 rounded-full bg-primary/10 items-center justify-center">
+                <TouchableOpacity
+                  onPress={() =>
+                    router.push({
+                      pathname: "/(private)/sold/finish",
+                      params: {
+                        id: String(vendaData.fatura?.id),
+                      },
+                    })
+                  }
+                  className="w-10 h-10 rounded-full bg-primary/10 items-center justify-center"
+                >
                   <Feather name="file-text" size={20} color={colors.primary} />
-                </View>
+                </TouchableOpacity>
               </View>
             </View>
           </View>

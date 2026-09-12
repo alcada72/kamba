@@ -1,17 +1,23 @@
+import { useAuthState } from "@/features/auth/store/auth.store";
+import { User } from "@/features/profile/types/user";
 import { t } from "@/shared/i18n";
 import { useLanguageStore } from "@/store/i18n.store";
 import colors from "@/theme/colos";
 import { Feather, FontAwesome } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Pressable, Text, TouchableOpacity, View } from "react-native";
+import { Image, Pressable, Text, TouchableOpacity, View } from "react-native";
 
-export const GeneralProfileHeader = () => {
+interface Props {
+  user: User | undefined;
+}
+
+export const GeneralProfileHeader = ({ user }: Props) => {
   const lang = useLanguageStore((store) => store.lang);
   const [showOptions, setshowOptions] = useState(false);
-
+  const { setLogged } = useAuthState();
   const exit = async () => {
-    router.push("/(auth)/truncked");
+    setLogged(false);
   };
 
   return (
@@ -59,14 +65,32 @@ export const GeneralProfileHeader = () => {
       </View>
 
       <View className="w-full items-center justify-center h-full gap-2">
-        <View className="overflow-hidden rounded-full size-36 items-center justify-end bg-primaryAccent p-4 border border-secondary">
-          <FontAwesome name="user" size={90} color={colors.secondary} />
+        <View
+          className="overflow-hidden rounded-full size-40 items-center
+         justify-center bg-primaryAccent  border-2 border-secondary"
+        >
+          {user?.photo ? (
+            <Image
+              source={{ uri: user?.photo }}
+              width={200}
+              height={200}
+              resizeMode="cover"
+              className="bg-gray-400 size-full rounded-full"
+            />
+          ) : (
+            <FontAwesome name="user" size={160} color={colors.secondary} />
+          )}
         </View>
 
         <View className="w-full items-center mt-5 justify-center">
           <Text className="text-3xl text-center text-secondary font-bold">
-            Alçada Kilundica
+            {user?.nome}
           </Text>
+          {user?.email && (
+            <Text className="text-2xl text-center text-gold-400 font-bold">
+              {user?.email}
+            </Text>
+          )}
         </View>
       </View>
     </View>

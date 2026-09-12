@@ -1,64 +1,53 @@
 import { useAuthState } from "@/features/auth/store/auth.store";
 import { assetsPath } from "@/shared/assets";
+import { KeysBoardComponent, PIN_LENGTH } from "@/shared/components/keysBoards";
 import { t } from "@/shared/i18n";
 import { useLanguageStore } from "@/store/i18n.store";
 import React, { useState } from "react";
-import { Image, Pressable, ScrollView, Text, View } from "react-native";
+import { Image, ScrollView, Text, View } from "react-native";
 
-const keysBoards = [
-  [1, 2, 3],
-  [4, 5, 6],
-  [7, 8, 9],
-  ["DEL", 0, "OK"],
-];
-
-const PIN_LENGTH = 4;
-const SAVED_PIN = "1234";
+const SAVED_PIN = "123456";
 
 export default function TrunckedScreen() {
   const lang = useLanguageStore((stt) => stt.lang);
   const setTruncked = useAuthState((stt) => stt.setTruncked);
 
   const [value, setValue] = useState("");
+  const [message, setMessage] = useState("");
 
-  const handleKeyPress = (key: number | string) => {
-    if (key === "DEL") {
-      setValue((prev) => prev.slice(0, -1));
-      return;
+  const handleLogin = async () => {
+    setMessage("");
+    if (value.length !== PIN_LENGTH) return;
+
+    console.log("PIN:", value);
+
+    if (value === SAVED_PIN) {
+      setTruncked(false);
+    } else {
+      setMessage("O pin inserido não está correto");
     }
 
-    if (key === "OK") {
-      if (value.length !== PIN_LENGTH) return;
-
-      console.log("PIN:", value);
-
-      if (value === SAVED_PIN) {
-        setTruncked(false);
-      }
-
-      return;
-    }
-
-    if (value.length >= PIN_LENGTH) return;
-
-    setValue((prev) => prev + String(key));
+    setValue("");
   };
 
   return (
-    <ScrollView className="flex-1">
-      <View className="flex-1 bg-primary px-6">
+    <ScrollView
+      contentContainerClassName="flex-1"
+      className="flex-1  bg-primary"
+    >
+      <View className="flex-1 items-center justify-start">
         <View className="items-center pt-16">
           <Image
-            source={assetsPath.logo}
+            source={assetsPath.kamba_logo_gold}
             style={{
-              width: 80,
+              width: 200,
               height: 80,
             }}
             resizeMode="contain"
           />
         </View>
 
-        <View className="flex-1 items-center justify-center">
+        <View className=" items-center justify-center">
           <Text className="text-center text-3xl font-bold text-white">
             {t("welcome", lang)}
           </Text>
@@ -66,55 +55,35 @@ export default function TrunckedScreen() {
           <Text className="mb-10 mt-3 text-center text-base text-white/70">
             {t("enterPin", lang)}
           </Text>
-
-          <View className="flex-row gap-4">
-            {Array.from({ length: PIN_LENGTH }).map((_, index) => {
-              const filled = index < value.length;
-
-              return (
-                <View
-                  key={index}
-                  className={`h-3 w-3 rounded-full ${
-                    filled ? "bg-white" : "bg-white/30"
-                  }`}
-                />
-              );
-            })}
-          </View>
-        </View>
-
-        {/* Teclado  */}
-        <View className="mb-10 items-center">
-          {keysBoards.map((row, rowIndex) => (
-            <View
-              key={rowIndex}
-              className="mb-4 flex-row items-center justify-center gap-4"
-            >
-              {row.map((key) => {
-                const isAction = key === "DEL" || key === "OK";
-
-                return (
-                  <Pressable
-                    key={key}
-                    onPress={() => handleKeyPress(key)}
-                    className="h-16 w-16 items-center justify-center rounded-full bg-white/10 active:bg-white/20"
-                  >
-                    <Text
-                      className={`font-semibold ${
-                        isAction
-                          ? "text-base text-white/70"
-                          : "text-xl text-white"
-                      }`}
-                    >
-                      {key === "DEL" ? "⌫" : key === "OK" ? "✓" : key}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
-          ))}
         </View>
       </View>
+
+      <Text className="text-2xl text-center text-error">{message}</Text>
+
+      <View className="flex-row gap-4 items-center justify-center my-8 mb-10">
+        {Array.from({ length: PIN_LENGTH }).map((_, index) => {
+          const filled = index < value.length;
+          return (
+            <View
+              key={index}
+              className={`h-9 w-9 rounded-full ${
+                filled ? "bg-secondary border-2 border-white" : "bg-white/30"
+              }`}
+            />
+          );
+        })}
+      </View>
+
+      {/* Teclado  */}
+      <KeysBoardComponent
+        onTextChange={(v) => {
+          if (value.length >= PIN_LENGTH) return;
+          setValue(v);
+        }}
+        onDelete={setValue}
+        onEnter={handleLogin}
+        disable={value.length !== PIN_LENGTH}
+      />
     </ScrollView>
   );
 }

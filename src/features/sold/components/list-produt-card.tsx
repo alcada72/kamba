@@ -26,9 +26,9 @@ export default function ListProdutCart({
   const lang = useLanguageStore((state) => state.lang);
 
   return (
-    <View key={product.id}>
-      <View className="flex-row items-center px-4 py-4">
-        <View className="mr-3 h-12 w-12 items-center justify-center rounded-xl bg-green-50">
+    <View>
+      <View className="flex-row items-center px-4 py-4 bg-green-200">
+        <View className="mr-3 h-12 w-12 items-center justify-center overflow-hidden rounded-2xl bg-green-200">
           <Text className="text-xl">📦</Text>
         </View>
 

@@ -7,8 +7,14 @@ import { AppState, AppStateStatus } from "react-native";
 const INACTIVITY_TIMEOUT = 60 * 1000;
 
 export default function RootLayout() {
-  const { isLogged, isTrunckedApp, setTruncked, setInactiveAt, inactiveAt } =
-    useAuthState();
+  const {
+    isLogged,
+    isTrunckedApp,
+    setTruncked,
+    setInactiveAt,
+    inactiveAt,
+    activeTrunckedApp,
+  } = useAuthState();
 
   const appStateRef = useRef<AppStateStatus>(AppState.currentState);
   const inactiveAtRef = useRef<number | null>(inactiveAt);
@@ -18,7 +24,7 @@ export default function RootLayout() {
   }, [inactiveAt]);
 
   useEffect(() => {
-    if (!isLogged || isTrunckedApp) {
+    if (!isLogged || isTrunckedApp || !activeTrunckedApp) {
       return;
     }
 
@@ -62,7 +68,7 @@ export default function RootLayout() {
     return () => {
       subscription.remove();
     };
-  }, [isLogged, isTrunckedApp, setInactiveAt, setTruncked]);
+  }, [activeTrunckedApp, isLogged, isTrunckedApp, setInactiveAt, setTruncked]);
 
   return (
     <Stack
