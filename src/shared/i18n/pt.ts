@@ -50,7 +50,6 @@ const pt: i18nType = {
 
   // Active Code
   activeCodeTitle: "Ativar código",
-  disableCodeTitle: "Desativar código",
   activeCodeCreateSubtitle: "Crie o seu código de acesso",
   activeCodeConfirmSubtitle: "Confirme o seu código de acesso",
   activeCodeCreateTitle: "Crie o seu código",
@@ -61,6 +60,12 @@ const pt: i18nType = {
   activeCodeConfirmDigits: "Confirme os {length} dígitos.",
   activeCodeMismatch: "Os códigos não coincidem.",
   activeCodeChange: "Alterar código",
+  disableCodeTitle: "Desativar código de bloqueio",
+  activeCodeDisableSubtitle:
+    "Digite seu código atual para desativar o bloqueio",
+  activeCodeDisableDescription:
+    "Digite o código de {length} dígitos para desativar o bloqueio",
+
   SelectPrinter: "Selecione uma impressora",
   LookingPrinters: "A procurar impressoras...",
   NoPrinterFound: "Nenhuma impressora encontrada",

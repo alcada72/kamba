@@ -3,10 +3,10 @@ import { useAuthState } from "@/features/auth/store/auth.store";
 import { assetsPath } from "@/shared/assets";
 import colors from "@/theme/colos";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
-import { router, Stack, useSegments } from "expo-router";
+import { router, Stack, usePathname, useSegments } from "expo-router";
 import { SQLiteProvider } from "expo-sqlite";
 import { StatusBar } from "expo-status-bar";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { Image, Text, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import "./global.css";
@@ -23,7 +23,21 @@ export default function RootLayout() {
 
   const segments = useSegments();
 
+  const pathname = usePathname();
+
+  const lastPrivateRoute = useRef<string | null>(null);
+
   const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    if (!isLogged) {
+      return;
+    }
+
+    if (pathname.startsWith("/private")) {
+      lastPrivateRoute.current = pathname;
+    }
+  }, [pathname, isLogged]);
 
   useEffect(() => {
     const unsubscribe = useAuthState.persist.onFinishHydration(() => {
@@ -48,20 +62,29 @@ export default function RootLayout() {
       if (currentGroup !== "(auth)") {
         router.replace("/(auth)");
       }
+
       return;
     }
 
-    if (isTrunckedApp || activeTrunckedApp) {
+    if (isTrunckedApp) {
       if (segments[1] !== "truncked") {
         router.replace("/(auth)/truncked");
       }
+
       return;
     }
 
+    if (currentGroup === "(auth)" && lastPrivateRoute.current) {
+      router.replace(lastPrivateRoute.current as any);
+
+      return;
+    }
     if (currentGroup !== "(private)") {
       router.replace("/(private)");
+
+      return;
     }
-  }, [isReady, isLogged, isTrunckedApp, segments, activeTrunckedApp]);
+  }, [isReady, isLogged, isTrunckedApp, segments, pathname, activeTrunckedApp]);
 
   if (!isReady) {
     return <SuspenseComponent />;

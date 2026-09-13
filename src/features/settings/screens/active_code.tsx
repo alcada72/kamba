@@ -11,7 +11,7 @@ import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
 import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 
-type Step = "create" | "confirm";
+type Step = "create" | "confirm" | "disable";
 
 export default function ActiveCodeScreen() {
   const [code, setCode] = useState("");
@@ -21,13 +21,17 @@ export default function ActiveCodeScreen() {
   const [userData, setUserData] = useState<User | null>(null);
 
   const { activeTrunckedApp, setActiveTrunckedApp } = useAuthState();
+
   const db = useSQLiteContext();
 
-  const userRepositorie = new UserRepository(db);
-  const currentCode = step === "create" ? code : confirmCode;
-  const isComplete = currentCode.length === PIN_LENGTH;
+  const userRepository = new UserRepository(db);
 
-  const lang = useLanguageStore((stt) => stt.lang);
+  const lang = useLanguageStore((state) => state.lang);
+
+  const currentCode =
+    step === "create" ? code : step === "confirm" ? confirmCode : code;
+
+  const isComplete = currentCode.length === PIN_LENGTH;
 
   useEffect(() => {
     loadUserData();
@@ -35,36 +39,50 @@ export default function ActiveCodeScreen() {
 
   const loadUserData = async () => {
     try {
-      const res = await userRepositorie.getFrist(1);
+      const res = await userRepository.getFrist(1);
+
       setUserData(res);
     } catch (error) {
-      console.log(error);
+      console.log("Erro ao carregar usuário:", error);
     }
   };
 
   const handleTextChange = (value: React.SetStateAction<string>) => {
     setMessage("");
+    const nextValue = typeof value === "function" ? value(currentCode) : value;
 
-    if (value.length > PIN_LENGTH) return;
+    if (nextValue.length > PIN_LENGTH) {
+      return;
+    }
 
-    if (step === "create") {
-      setCode(value);
+    if (step === "create" || step === "disable") {
+      setCode(nextValue);
     } else {
-      setConfirmCode(value);
+      setConfirmCode(nextValue);
     }
   };
 
   const handleDelete = (value: React.SetStateAction<string>) => {
     setMessage("");
 
-    if (step === "create") {
-      setCode(value);
+    const nextValue = typeof value === "function" ? value(currentCode) : value;
+
+    if (step === "create" || step === "disable") {
+      setCode(nextValue);
     } else {
-      setConfirmCode(value);
+      setConfirmCode(nextValue);
     }
   };
 
-  const handleEnter = async () => {
+  const handleBack = () => {
+    setMessage("");
+    setConfirmCode("");
+    setCode("");
+
+    setStep(activeTrunckedApp ? "disable" : "create");
+  };
+
+  const handleActivate = async () => {
     setMessage("");
 
     if (step === "create") {
@@ -75,6 +93,7 @@ export default function ActiveCodeScreen() {
             String(PIN_LENGTH),
           ),
         );
+
         return;
       }
 
@@ -84,75 +103,160 @@ export default function ActiveCodeScreen() {
       return;
     }
 
-    if (!isComplete) {
-      setMessage(
-        t("activeCodeConfirmDigits", lang).replace(
-          "{length}",
-          String(PIN_LENGTH),
-        ),
-      );
-      return;
-    }
+    if (step === "confirm") {
+      if (!isComplete) {
+        setMessage(
+          t("activeCodeConfirmDigits", lang).replace(
+            "{length}",
+            String(PIN_LENGTH),
+          ),
+        );
 
-    const errorMessage = t("activeCodeMismatch", lang);
+        return;
+      }
 
-    if (code !== confirmCode) {
-      setMessage(errorMessage);
+      if (code !== confirmCode) {
+        const errorMessage = t("activeCodeMismatch", lang);
 
-      Alert.alert(t("error", lang), errorMessage, [
-        {
-          text: "OK",
-          onPress: handleBack,
-        },
-      ]);
+        setMessage(errorMessage);
 
-      return;
-    } else if (userData?.senha !== code || activeTrunckedApp) {
-      return;
-    }
-
-    console.log("PIN confirmado:", code);
-
-    try {
-      const res = await userRepositorie.update(
-        {
-          senha: activeTrunckedApp ? undefined : code,
-        },
-        1,
-      );
-
-      if (!res?.lastInsertRowId) {
         Alert.alert(t("error", lang), errorMessage, [
           {
             text: "OK",
             onPress: handleBack,
           },
         ]);
-      } else {
+
+        return;
+      }
+
+      try {
+        const res = await userRepository.update(
+          {
+            senha: code,
+          },
+          1,
+        );
+
+        if (!res || res.changes === 0) {
+          Alert.alert(t("error", lang), "Não foi possível ativar o código.");
+
+          return;
+        }
+
+        setActiveTrunckedApp(true);
+
         Alert.alert(t("success", lang), t("savedSuccessfully", lang), [
           {
             text: "OK",
             onPress: () => {
-              setActiveTrunckedApp(!activeTrunckedApp);
               router.back();
             },
           },
         ]);
+      } catch (error) {
+        console.log("Erro ao ativar código:", error);
+
+        Alert.alert(t("error", lang), "Não foi possível ativar o código.");
       }
-    } catch (error) {
-      console.log(error);
     }
   };
 
-  const handleBack = () => {
+  const handleDisable = async () => {
     setMessage("");
-    setConfirmCode("");
-    setCode("");
-    setStep("create");
+
+    if (!isComplete) {
+      setMessage(
+        t("activeCodeEnterDigits", lang).replace(
+          "{length}",
+          String(PIN_LENGTH),
+        ),
+      );
+
+      return;
+    }
+
+    if (!userData?.senha) {
+      const errorMessage = "Nenhum código de bloqueio encontrado.";
+
+      setMessage(errorMessage);
+
+      return;
+    }
+
+    if (userData.senha !== code) {
+      const errorMessage = t("activeCodeMismatch", lang);
+
+      setMessage(errorMessage);
+
+      Alert.alert(t("error", lang), errorMessage, [
+        {
+          text: "OK",
+        },
+      ]);
+
+      return;
+    }
+
+    try {
+      const res = await userRepository.update(
+        {
+          senha: null,
+        },
+        1,
+      );
+
+      if (!res || res.changes === 0) {
+        Alert.alert(t("error", lang), "Não foi possível desativar o código.");
+
+        return;
+      }
+
+      setActiveTrunckedApp(false);
+
+      setUserData((previous) =>
+        previous
+          ? {
+              ...previous,
+              senha: null,
+            }
+          : previous,
+      );
+
+      Alert.alert(t("success", lang), t("savedSuccessfully", lang), [
+        {
+          text: "OK",
+          onPress: () => {
+            router.back();
+          },
+        },
+      ]);
+    } catch (error) {
+      console.log("Erro ao desativar código:", error);
+
+      Alert.alert(t("error", lang), "Não foi possível desativar o código.");
+    }
   };
 
+  const handleEnter = async () => {
+    if (activeTrunckedApp) {
+      await handleDisable();
+    } else {
+      await handleActivate();
+    }
+  };
+
+  useEffect(() => {
+    setStep(activeTrunckedApp ? "disable" : "create");
+  }, [activeTrunckedApp]);
+
   return (
-    <View className="flex-1" style={{ backgroundColor: colors.background }}>
+    <View
+      className="flex-1"
+      style={{
+        backgroundColor: colors.background,
+      }}
+    >
       <GeneralHeader>
         <View className="items-center justify-center py-2">
           <Text className="text-white text-2xl font-bold">
@@ -163,9 +267,11 @@ export default function ActiveCodeScreen() {
 
           <Text className="text-white/70 text-sm mt-1">
             {t(
-              step === "create"
-                ? "activeCodeCreateSubtitle"
-                : "activeCodeConfirmSubtitle",
+              activeTrunckedApp
+                ? "activeCodeDisableSubtitle"
+                : step === "create"
+                  ? "activeCodeCreateSubtitle"
+                  : "activeCodeConfirmSubtitle",
               lang,
             )}
           </Text>
@@ -181,42 +287,53 @@ export default function ActiveCodeScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <View className="px-6 pb-6">
-          <View className="flex-row justify-center items-center gap-2 mb-7">
-            <View
-              className={`h-1.5 w-12 rounded-full ${
-                step === "create" ? "bg-primary" : "bg-primaryAccent"
-              }`}
-            />
+          {!activeTrunckedApp && (
+            <View className="flex-row justify-center items-center gap-2 mb-7">
+              <View
+                className={`h-1.5 w-12 rounded-full ${
+                  step === "create" ? "bg-primary" : "bg-primaryAccent"
+                }`}
+              />
 
-            <View
-              className={`h-1.5 w-12 rounded-full ${
-                step === "confirm" ? "bg-primary" : "bg-primaryAccent"
-              }`}
-            />
-          </View>
+              <View
+                className={`h-1.5 w-12 rounded-full ${
+                  step === "confirm" ? "bg-primary" : "bg-primaryAccent"
+                }`}
+              />
+            </View>
+          )}
 
           <View className="items-center mb-8">
             <Text className="text-text text-2xl font-bold text-center">
-              {t(
-                step === "create"
-                  ? "activeCodeCreateTitle"
-                  : "activeCodeConfirmTitle",
-                lang,
-              )}
+              {activeTrunckedApp
+                ? t("disableCodeTitle", lang)
+                : t(
+                    step === "create"
+                      ? "activeCodeCreateTitle"
+                      : "activeCodeConfirmTitle",
+                    lang,
+                  )}
             </Text>
 
             <Text className="text-text text-base text-center mt-2">
-              {t(
-                step === "create"
-                  ? "activeCodeCreateDescription"
-                  : "activeCodeConfirmDescription",
-                lang,
-              ).replace("{length}", String(PIN_LENGTH))}
+              {activeTrunckedApp
+                ? t("activeCodeDisableDescription", lang).replace(
+                    "{length}",
+                    String(PIN_LENGTH),
+                  )
+                : t(
+                    step === "create"
+                      ? "activeCodeCreateDescription"
+                      : "activeCodeConfirmDescription",
+                    lang,
+                  ).replace("{length}", String(PIN_LENGTH))}
             </Text>
           </View>
 
           <View className="flex-row gap-4 items-center justify-center mb-6">
-            {Array.from({ length: PIN_LENGTH }).map((_, index) => {
+            {Array.from({
+              length: PIN_LENGTH,
+            }).map((_, index) => {
               const filled = index < currentCode.length;
 
               return (
@@ -244,7 +361,7 @@ export default function ActiveCodeScreen() {
             )}
           </View>
 
-          {step === "confirm" && (
+          {!activeTrunckedApp && step === "confirm" && (
             <Pressable onPress={handleBack} className="items-center mb-3">
               <Text className="text-secondary text-lg font-semibold">
                 {t("activeCodeChange", lang)}

@@ -17,6 +17,7 @@ export default function RootLayout() {
   } = useAuthState();
 
   const appStateRef = useRef<AppStateStatus>(AppState.currentState);
+
   const inactiveAtRef = useRef<number | null>(inactiveAt);
 
   useEffect(() => {
@@ -37,16 +38,16 @@ export default function RootLayout() {
 
       if (wasActive && isInactive) {
         const timestamp = Date.now();
-
         inactiveAtRef.current = timestamp;
+
         setInactiveAt(timestamp);
       }
 
       if (nextState === "active") {
-        const inactiveAt = inactiveAtRef.current;
+        const inactiveTimestamp = inactiveAtRef.current;
 
-        if (inactiveAt !== null) {
-          const elapsed = Date.now() - inactiveAt;
+        if (inactiveTimestamp !== null) {
+          const elapsed = Date.now() - inactiveTimestamp;
 
           if (elapsed >= INACTIVITY_TIMEOUT) {
             setTruncked(true);
@@ -54,9 +55,9 @@ export default function RootLayout() {
         }
 
         inactiveAtRef.current = null;
+
         setInactiveAt(null);
       }
-
       appStateRef.current = nextState;
     };
 
@@ -74,6 +75,7 @@ export default function RootLayout() {
     <Stack
       screenOptions={{
         headerShown: false,
+
         contentStyle: {
           backgroundColor: colors.background,
           flex: 1,

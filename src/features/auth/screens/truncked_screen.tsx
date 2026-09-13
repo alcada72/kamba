@@ -1,12 +1,14 @@
 import { useAuthState } from "@/features/auth/store/auth.store";
+import { UserRepository } from "@/features/profile/repositories/userRepositories";
+import { User } from "@/features/profile/types/user";
 import { assetsPath } from "@/shared/assets";
 import { KeysBoardComponent, PIN_LENGTH } from "@/shared/components/keysBoards";
 import { t } from "@/shared/i18n";
 import { useLanguageStore } from "@/store/i18n.store";
-import React, { useState } from "react";
-import { Image, ScrollView, Text, View } from "react-native";
 
-const SAVED_PIN = "123456";
+import { useSQLiteContext } from "expo-sqlite";
+import React, { useEffect, useState } from "react";
+import { Image, ScrollView, Text, View } from "react-native";
 
 export default function TrunckedScreen() {
   const lang = useLanguageStore((stt) => stt.lang);
@@ -15,13 +17,33 @@ export default function TrunckedScreen() {
   const [value, setValue] = useState("");
   const [message, setMessage] = useState("");
 
+  const [userData, setUserData] = useState<User | null>(null);
+
+  const db = useSQLiteContext();
+
+  const userRepository = new UserRepository(db);
+
+  useEffect(() => {
+    loadUserData();
+  }, []);
+
+  const loadUserData = async () => {
+    try {
+      const res = await userRepository.getFrist(1);
+
+      setUserData(res);
+    } catch (error) {
+      console.log("Erro ao carregar usuário:", error);
+    }
+  };
+
   const handleLogin = async () => {
     setMessage("");
+    if (!userData) return;
+
     if (value.length !== PIN_LENGTH) return;
 
-    console.log("PIN:", value);
-
-    if (value === SAVED_PIN) {
+    if (value === userData?.senha) {
       setTruncked(false);
     } else {
       setMessage("O pin inserido não está correto");

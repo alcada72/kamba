@@ -58,7 +58,6 @@ const en = {
 
   // Active Code
   activeCodeTitle: "Activate code",
-  disableCodeTitle: "Disable code",
   activeCodeCreateSubtitle: "Create your access code",
   activeCodeConfirmSubtitle: "Confirm your access code",
   activeCodeCreateTitle: "Create your code",
@@ -69,6 +68,10 @@ const en = {
   activeCodeConfirmDigits: "Confirm the {length}-digit code.",
   activeCodeMismatch: "The codes do not match.",
   activeCodeChange: "Change code",
+  disableCodeTitle: "Disable lock code",
+  activeCodeDisableSubtitle: "Enter your current code to disable the lock",
+  activeCodeDisableDescription:
+    "Enter your {length}-digit code to disable the lock",
 
   // Backup
   backupSalesTitle: "Sales data backup",
