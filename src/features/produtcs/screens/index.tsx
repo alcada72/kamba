@@ -95,7 +95,7 @@ export default function ProductsScreen() {
   }, [products]);
 
   const handleProductPress = (product: Product) => {
-    router.push(`/private/produtcs/${product.id}`);
+    router.push(`/(private)/produtcs/${product.id}`);
   };
 
   const renderProduct = ({ item }: { item: Product }) => {
@@ -209,7 +209,7 @@ export default function ProductsScreen() {
             <EmptyState
               lang={lang}
               search={search}
-              onAdd={() => router.push("/private/produtcs/create")}
+              onAdd={() => router.push("/(private)/produtcs/create")}
             />
           }
         />

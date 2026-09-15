@@ -34,6 +34,7 @@ const colors = {
 
   info: "#3F7185",
   infoLight: "#E1F0F5",
+  blue: "#4285F4",
 
   // Green scale
   green50: "#F0F6F3",

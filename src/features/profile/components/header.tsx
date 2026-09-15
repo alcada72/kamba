@@ -9,6 +9,11 @@ import { Pressable, Text, TouchableOpacity, View } from "react-native";
 export function HeaderProfile() {
   const lang = useLanguageStore((store) => store.lang);
   const [showOptions, setshowOptions] = useState(false);
+
+  const exit = async () => {
+    router.push("/(auth)/truncked");
+  };
+
   return (
     <View className="w-full bg-primary h-96 rounded-b-3xl">
       <View className="flex-row absolute w-full top-11 px-4 left-0 items-center justify-between">
@@ -36,9 +41,12 @@ export function HeaderProfile() {
             style={{ display: showOptions ? "flex" : "none" }}
             className="bg-background mt-12 right-0 w-48 z-40 p-2 absolute top-0 h-20 rounded-lg"
           >
-            <TouchableOpacity className="px-2 border-b-[0.5px] border-b-primary">
-              <Text className="text-base text-gray-700">
-                {t("editProfile", lang)}
+            <TouchableOpacity
+              onPress={exit}
+              className="px-2 border-b-[0.5px] border-b-primary"
+            >
+              <Text className="text-lg font-medium text-red-700">
+                {t("logout", lang)}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity className="px-2 border-b border-b-primary">

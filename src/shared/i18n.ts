@@ -17,6 +17,10 @@ const translations = {
     menu: "Menu",
     newSold: "New Sold",
     quickAccess: "Quick access",
+    invoiceNumber: "Invoice Number",
+    invoice: "Invoice",
+    sale: "Sale",
+    statusSale: "Status Sale",
     newSale: "New sale",
     newProduct: "New Product",
     products: "Products",
@@ -33,6 +37,7 @@ const translations = {
     CompleteSale: "Complete sale",
     Saletotal: "Sale total",
     cadProdut: "Cadastre um novo produto",
+
     // Actions
     save: "Save",
     cancel: "Cancel",
@@ -63,6 +68,9 @@ const translations = {
     rememberMe: "Remember me",
     signIn: "Sign in",
     signUp: "Sign up",
+    signInWithGoogle: "signIn With Google",
+    continueWithGoogle: "continue With Google",
+    enterPin: "Enter your Kamba pin",
 
     // User
     name: "Name",
@@ -112,6 +120,7 @@ const translations = {
     about: "About",
     terms: "Terms and conditions",
     privacy: "Privacy policy",
+    security: "Security",
     customizeExperience: "Customize your experience.",
     version: "Version",
   },
@@ -129,12 +138,17 @@ const translations = {
     menu: "Menu",
     newSold: "Nova venda",
     quickAccess: "Acesso rápido",
+    sale: "Venda",
+    statusSale: "Status da venda",
     newSale: "Nova venda",
     newProduct: "Novo Produto",
     products: "Produtos",
     product: "Produto",
     customers: "Clientes",
     reports: "Relatórios",
+    invoice: "Fatura",
+    invoiceNumber: "Número da fatura",
+
     summary: "Resumo",
     todaysSales: "Vendas hoje",
     recentSales: "Vendas recentes",
@@ -174,6 +188,9 @@ const translations = {
     rememberMe: "Lembrar-me",
     signIn: "Entrar",
     signUp: "Criar conta",
+    signInWithGoogle: "Entre com a Google",
+    continueWithGoogle: "Continuar com o Google",
+    enterPin: "Adciona o seu pin do Kamba",
 
     name: "Nome",
     firstName: "Nome próprio",
@@ -217,11 +234,11 @@ const translations = {
     about: "Sobre",
     terms: "Termos e condições",
     privacy: "Política de privacidade",
+    security: "Segurança",
     customizeExperience: "Personalize a sua experiência.",
     version: "Versão",
   },
 } satisfies Record<langs, Dictionary>;
-
 
 export type TranslationKey = keyof typeof translations.en;
 

@@ -1,3 +1,4 @@
+import colors from "@/theme/colos";
 import { Feather } from "@expo/vector-icons";
 import React from "react";
 import { Pressable, Text, View } from "react-native";
@@ -13,10 +14,13 @@ export function FastAcessItem({ icon, label, onPress }: Props) {
     <Pressable onPress={onPress} className="active:opacity-70 w-28">
       <View className="items-center rounded-2xl bg-surface p-4">
         <View className="h-12 w-12 items-center justify-center rounded-xl bg-green-50">
-          <Feather name={icon} size={24} color="#063023" />
+          <Feather name={icon} size={24} color={colors.primary} />
         </View>
 
-        <Text className="mt-2 text-center text-sm font-semibold text-text">
+        <Text
+          numberOfLines={1}
+          className="mt-2 text-center text-sm font-semibold text-text"
+        >
           {label}
         </Text>
       </View>

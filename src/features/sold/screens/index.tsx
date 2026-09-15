@@ -2,24 +2,18 @@ import { useLanguageStore } from "@/store/i18n.store";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useState } from "react";
-import { Alert, Pressable, ScrollView, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Alert, Pressable, Text, View } from "react-native";
 
+import { FaturaRepository } from "@/features/faturas/repository/faturaRepository";
 import { ProductRepository } from "@/features/produtcs/repositories/productRepository";
-import formatCurrency from "@/shared/format-currecy";
-import { t } from "@/shared/i18n";
 import colors from "@/theme/colos";
 import { Feather } from "@expo/vector-icons";
+import { ListProdutsCart } from "../components/list-produts";
+import { NopermissionCamera } from "../components/noPermissionCamera";
+import { TotalCard } from "../components/total-card";
 import { ReceiptService } from "../repositories/receiptService";
 import { SaleRepository } from "../repositories/saleRepository";
-
-interface CartProduct {
-  id: number;
-  barcode: string | null;
-  name: string;
-  price: number;
-  quantity: number;
-}
+import { CartProduct } from "../types/sold";
 
 export default function SoldScreen() {
   const { lang } = useLanguageStore();
@@ -28,8 +22,9 @@ export default function SoldScreen() {
 
   const productRepository = new ProductRepository(db);
   const saleRepository = new SaleRepository(db);
+  const faturaRepository = new FaturaRepository(db);
 
-  const [permission, requestPermission] = useCameraPermissions();
+  const [permission] = useCameraPermissions();
 
   const [products, setProducts] = useState<CartProduct[]>([]);
 
@@ -214,6 +209,67 @@ export default function SoldScreen() {
     setProducts((current) => current.filter((product) => product.id !== id));
   };
 
+  const addQdt = async (id: number | string) => {
+    const product = await productRepository.findById(Number(id));
+    if (!product) return;
+
+    setProducts((current) => {
+      const existing = current.find((item) => item.id === product.id);
+
+      if (!existing) {
+        return [
+          ...current,
+          {
+            id: product.id,
+            barcode: product.codigo_barras,
+            name: product.nome,
+            price: product.preco,
+            quantity: 1,
+          },
+        ];
+      }
+
+      if (existing.quantity >= product.estoque) {
+        return current;
+      }
+
+      return current.map((item) =>
+        item.id === product.id
+          ? {
+              ...item,
+              quantity: item.quantity + 1,
+            }
+          : item,
+      );
+    });
+  };
+
+  const rmQdt = async (id: number | string) => {
+    const product = await productRepository.findById(Number(id));
+    if (!product) return;
+
+    setProducts((current) => {
+      const existing = current.find((item) => item.id === product.id);
+
+      if (!existing) {
+        return current;
+      }
+
+      if (existing.quantity <= 1) {
+        return current.filter((item) => item.id !== product.id);
+      }
+
+      return current.map((item) =>
+        item.id === product.id
+          ? {
+              ...item,
+              quantity: item.quantity - 1,
+            }
+          : item,
+      );
+    });
+  };
+
   const clearCart = () => {
     setProducts([]);
   };
@@ -243,28 +299,33 @@ export default function SoldScreen() {
         },
       });
 
-      await ReceiptService.print(
-        {
-          saleId: result.saleId,
-          date: new Date().toLocaleString("pt-AO"),
+      const sale = {
+        saleId: result.saleId,
+        date: new Date().toLocaleString("pt-AO"),
 
-          items: products.map((product) => ({
-            name: product.name,
-            quantity: product.quantity,
-            price: product.price,
-            subtotal: product.price * product.quantity,
-          })),
+        items: products.map((product) => ({
+          name: product.name,
+          quantity: product.quantity,
+          price: product.price,
+          subtotal: product.price * product.quantity,
+        })),
 
-          total,
+        total,
 
-          paymentMethod: "Dinheiro",
-          paidAmount: total,
-          change: 0,
-        },
-        {
-          width: "80mm",
-        },
-      );
+        paymentMethod: "Dinheiro",
+        paidAmount: total,
+        change: 0,
+      };
+
+      await faturaRepository.create({
+        venda_id: sale.saleId,
+        numero: `00${sale.saleId}`,
+        fatura_json: JSON.stringify(sale),
+      });
+
+      await ReceiptService.print(sale, {
+        width: "80mm",
+      });
 
       Alert.alert(
         lang === "pt" ? "Venda concluída" : "Sale completed",
@@ -313,46 +374,19 @@ export default function SoldScreen() {
 
   if (!permission) {
     return (
-      <SafeAreaView className="flex-1 items-center justify-center bg-background">
+      <View className="flex-1 items-center justify-center bg-background">
         <Text className="text-textSecondary">
           {lang === "pt"
             ? "A verificar permissões..."
             : "Checking permissions..."}
         </Text>
-      </SafeAreaView>
+      </View>
     );
   }
 
   if (!permission.granted) {
-    return (
-      <SafeAreaView className="flex-1 items-center justify-center bg-background px-6">
-        <View className="h-20 w-20 items-center justify-center rounded-3xl bg-green-50">
-          <Text className="text-4xl">📷</Text>
-        </View>
-
-        <Text className="mt-6 text-center text-2xl font-bold text-primary">
-          {t("CameraAccess", lang)}
-        </Text>
-
-        <Text className="mt-3 text-center text-base leading-6 text-textSecondary">
-          {lang === "pt"
-            ? "Precisamos de acesso à câmera para ler os códigos de barras dos produtos."
-            : "We need camera access to scan product barcodes."}
-        </Text>
-
-        <Pressable
-          onPress={requestPermission}
-          className="mt-8 rounded-2xl bg-primary px-8 py-4 active:opacity-80"
-        >
-          <Text className="font-bold text-white">{t("AllowCamera", lang)}</Text>
-        </Pressable>
-      </SafeAreaView>
-    );
+    return <NopermissionCamera />;
   }
-
-  // ==========================================
-  // TELA
-  // ==========================================
 
   return (
     <View className="flex-1 bg-background">
@@ -397,136 +431,21 @@ export default function SoldScreen() {
       </View>
 
       {/* PRODUTOS */}
-
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerClassName="pb-8"
-      >
-        <View className="mt-7 px-5">
-          <View className="mb-3 flex-row items-center justify-between">
-            <Text className="text-lg font-bold text-text">
-              {t("products", lang)}
-            </Text>
-
-            <Text className="text-sm text-textSecondary">
-              {products.length} {lang === "pt" ? "item(ns)" : "item(s)"}
-            </Text>
-          </View>
-
-          {products.length === 0 ? (
-            <View className="items-center rounded-2xl border border-dashed border-border bg-surface px-6 py-10">
-              <Text className="text-3xl">🛒</Text>
-
-              <Text className="mt-3 text-center font-semibold text-text">
-                {lang === "pt"
-                  ? "Nenhum produto adicionado"
-                  : "No products added"}
-              </Text>
-
-              <Text className="mt-1 text-center text-sm text-textSecondary">
-                {lang === "pt"
-                  ? "Leia um código de barras para adicionar um produto."
-                  : "Scan a barcode to add a product."}
-              </Text>
-            </View>
-          ) : (
-            <View className="overflow-hidden rounded-2xl border border-border bg-surface">
-              {products.map((product, index) => (
-                <View key={product.id}>
-                  <View className="flex-row items-center px-4 py-4">
-                    <View className="mr-3 h-12 w-12 items-center justify-center rounded-xl bg-green-50">
-                      <Text className="text-xl">📦</Text>
-                    </View>
-
-                    <View className="flex-1">
-                      <Text className="font-semibold text-text">
-                        {product.name}
-                      </Text>
-
-                      <Text className="mt-1 text-xs text-textMuted">
-                        {product.barcode ?? "-"}
-                      </Text>
-
-                      <Text className="mt-1 text-sm text-textSecondary">
-                        {product.quantity} × {formatCurrency(product.price)}
-                      </Text>
-                    </View>
-
-                    <View className="items-end">
-                      <Text className="font-bold text-primary">
-                        {(product.price * product.quantity).toFixed(2)} Kz
-                      </Text>
-
-                      <Pressable
-                        onPress={() => removeProduct(product.id)}
-                        className="mt-2"
-                      >
-                        <Text className="text-xs font-semibold text-error">
-                          {t("remove", lang)}
-                        </Text>
-                      </Pressable>
-                    </View>
-                  </View>
-
-                  {index < products.length - 1 && (
-                    <View className="ml-4 h-px bg-border" />
-                  )}
-                </View>
-              ))}
-            </View>
-          )}
-        </View>
-      </ScrollView>
+      <ListProdutsCart
+        removeProduct={(id) => removeProduct(Number(id))}
+        rmQtd={(id) => rmQdt(id)}
+        addQtd={(id) => addQdt(id)}
+        products={products}
+      />
 
       {/* TOTAL */}
-
-      <View className="mx-5 mt-6 rounded-3xl bg-primary p-4">
-        <View className="flex-row items-center justify-between">
-          <View>
-            <Text className="text-sm text-white/70">
-              {t("Saletotal", lang)}
-            </Text>
-
-            <Text className="mt-1 text-3xl font-bold text-white">
-              {formatCurrency(total)}
-            </Text>
-          </View>
-
-          {products.length > 0 && (
-            <Pressable
-              onPress={clearCart}
-              disabled={finishingSale}
-              className="rounded-xl bg-white/10 px-4 py-3 active:bg-white/20"
-            >
-              <Text className="font-semibold text-white">
-                {lang === "pt" ? "Limpar" : "Clear"}
-              </Text>
-            </Pressable>
-          )}
-        </View>
-
-        {/* FINALIZAR */}
-
-        <Pressable
-          disabled={products.length === 0 || finishingSale}
-          onPress={handleFinishSale}
-          className={`mt-2 items-center rounded-2xl py-4 ${
-            products.length > 0 && !finishingSale
-              ? "bg-secondary"
-              : "bg-white/20"
-          }`}
-        >
-          <Text
-            className={`font-bold ${
-              products.length > 0 && !finishingSale
-                ? "text-primary"
-                : "text-white/50"
-            }`}
-          >
-            {finishingSale ? t("Completing", lang) : t("CompleteSale", lang)}
-          </Text>
-        </Pressable>
-      </View>
+      <TotalCard
+        handleFinishSale={handleFinishSale}
+        clearCart={clearCart}
+        productsLength={products.length}
+        finishingSale={finishingSale}
+        total={total}
+      />
     </View>
   );
 }

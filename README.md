@@ -1,50 +1,153 @@
-# Bem-vindo ao Kamba 👋
+Kamba
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Sistema de vendas desenvolvido com React Native, Expo e SQLite, voltado para gestão de produtos, vendas, itens vendidos e emissão de faturas/recibos.
 
-## Get started
+🚀 Tecnologias
+React Native
+Expo
+Expo Router
+Expo SQLite
+TypeScript
+NativeWind
+Feather Icons
+📁 Estrutura do projeto
+app/
+├── (tabs)/
+├── vendas/
+├── produtos/
+└── ...
 
-1. Install dependencies
+src/
+├── repositories/
+├── services/
+├── types/
+├── database/
+└── ...
 
-   ```bash
-   npm install
-   ```
+A aplicação utiliza o Expo Router para navegação baseada em arquivos.
 
-2. Start the app
+🗄️ Banco de dados
 
-   ```bash
-   npx expo start
-   ```
+O Kamba utiliza SQLite para armazenamento local.
 
-In the output, you'll find options to open the app in a
+Principais entidades:
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+                    ┌──────────────┐
+                    │   produtos   │
+                    └──────┬───────┘
+                           │
+                           │ N:1
+                           ▼
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+┌──────────────┐ ┌──────────────┐
+│ vendas │────▶│ itens_venda │
+└──────┬───────┘ 1:N └──────────────┘
+│
+│ 1:1
+▼
+┌──────────────┐
+│ faturas │
+└──────────────┘
 
-## Get a fresh project
+Relacionamentos
+Uma venda possui vários itens.
+Cada item pertence a uma venda.
+Cada item referencia um produto.
+Cada venda possui uma fatura.
+Uma fatura pertence a uma única venda.
+A exclusão de uma venda remove automaticamente seus itens e sua fatura.
+Um produto não pode ser excluído enquanto estiver associado a uma venda.
+💾 Persistência da fatura
 
-When you're ready, run:
+A fatura também possui um campo fatura_json, utilizado para armazenar um snapshot dos dados da venda.
 
-```bash
-npm run reset-project
-```
+Os dados são convertidos para JSON antes de serem armazenados:
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+await faturaRepository.create({
+venda_id: sale.saleId,
+numero: `00${sale.saleId}`,
+fatura_json: JSON.stringify(sale),
+});
 
-## Learn more
+Ao recuperar os dados:
 
-To learn more about developing your project with Expo, look at the following resources:
+const sale = JSON.parse(fatura.fatura_json);
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Isso permite manter uma cópia dos dados utilizados na emissão do recibo.
 
-## Join the community
+🧱 Arquitetura
 
-Join our community of developers creating universal apps.
+O projeto utiliza uma separação por responsabilidades:
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Tela
+│
+▼
+Repository
+│
+▼
+SQLite
+
+Os Repositories são responsáveis pelo acesso ao banco de dados, enquanto os Services concentram regras e funcionalidades específicas da aplicação.
+
+⚙️ Instalação
+
+Clone o projeto e instale as dependências:
+
+npm install
+
+▶️ Executar
+
+Inicie o projeto com:
+
+npx expo start
+
+Depois escolha uma das opções disponíveis:
+
+Android Emulator
+iOS Simulator
+Expo Go
+Development Build
+📱 Desenvolvimento
+
+Os arquivos da aplicação estão dentro do diretório:
+
+app/
+
+Como o projeto utiliza Expo Router, as rotas são definidas através da estrutura de arquivos.
+
+🗃️ Migrações
+
+As alterações no banco de dados são organizadas através de migrações.
+
+Exemplo:
+
+export async function migrateV2(db: SQLiteDatabase) {
+await db.execAsync(`     ...
+  `);
+}
+
+Isso permite evoluir a estrutura do banco sem perder os dados existentes.
+
+🧪 Desenvolvimento
+
+Para verificar problemas de TypeScript:
+
+npx tsc --noEmit
+
+Para iniciar o projeto:
+
+npx expo start
+
+📌 Status
+
+🚧 Em desenvolvimento
+
+O Kamba está sendo desenvolvido continuamente, com funcionalidades de vendas, produtos, persistência local e emissão de recibos.
+
+📄 Licença
+
+Este projeto é privado e destinado ao desenvolvimento do sistema Kamba.
+
+:::
+
+Se quiser, também posso fazer uma versão **mais bonita de GitHub**, com badges, screenshots, funcionalidades, arquitetura, banco de dados e instruções de build/Android.

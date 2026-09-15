@@ -16,14 +16,14 @@ import {
 } from "@/features/home/repositories/dashboardRepository";
 import { useSQLiteContext } from "expo-sqlite";
 
-import { UserRepository } from "@/features/profile/repositories/userrepositories";
+import { UserRepository } from "@/features/profile/repositories/userRepositories";
 import { User } from "@/features/profile/types/user";
 import formatCurrency from "@/shared/format-currecy";
-import formatDate from "@/shared/formate-date";
 import { FastAcessItem } from "../components/falstAcess-item";
 import { HomeHeader } from "../components/header";
+import { SaleCardHome } from "../components/sale-card";
 
-export function HomeScreen() {
+export default function HomeScreen() {
   const { lang } = useLanguageStore();
 
   const db = useSQLiteContext();
@@ -56,7 +56,7 @@ export function HomeScreen() {
       const [summary, sales, user] = await Promise.all([
         dashboardRepository.getSummary(),
         dashboardRepository.getRecentSales(15),
-        userRepository.getFristUser(),
+        userRepository.getFrist(),
       ]);
 
       setTodaySalesTotal(summary.todaySalesTotal);
@@ -90,13 +90,13 @@ export function HomeScreen() {
             <FastAcessItem
               icon="shopping-cart"
               label={t("newSale", lang)}
-              onPress={() => router.push("/private/sold")}
+              onPress={() => router.push("/(private)/sold")}
             />
 
             <FastAcessItem
               icon="package"
               label={t("products", lang)}
-              onPress={() => router.push("/private/produtcs")}
+              onPress={() => router.push("/(private)/produtcs")}
             />
 
             <FastAcessItem
@@ -166,8 +166,8 @@ export function HomeScreen() {
             </Text>
 
             {recentSales.length > 0 && (
-              <Pressable onPress={() => console.log("Todas as vendas")}>
-                <Text className="text-sm font-semibold text-primary">
+              <Pressable onPress={() => router.navigate("/(private)/vendas")}>
+                <Text className="text-xl font-semibold text-primary">
                   {t("viewAll", lang)}
                 </Text>
               </Pressable>
@@ -193,45 +193,11 @@ export function HomeScreen() {
           {!loading && recentSales.length > 0 && (
             <View className="overflow-hidden rounded-2xl border border-border bg-surface">
               {recentSales.map((sale, index) => (
-                <View key={sale.id}>
-                  <View className="flex-row items-center px-4 py-4">
-                    {/* ÍCONE */}
-
-                    <View className="mr-3 h-11 w-11 items-center justify-center rounded-xl bg-green-50">
-                      <Text className="text-xl">🧾</Text>
-                    </View>
-
-                    {/* INFORMAÇÃO */}
-
-                    <View className="flex-1">
-                      <Text className="font-semibold text-text">
-                        {lang === "pt"
-                          ? `Venda #${sale.id}`
-                          : `Sale #${sale.id}`}
-                      </Text>
-
-                      <Text className="mt-1 text-xs text-textSecondary">
-                        {formatDate(sale.data_venda)}
-                      </Text>
-                    </View>
-
-                    {/* TOTAL */}
-
-                    <View className="items-end">
-                      <Text className="font-bold text-primary">
-                        {formatCurrency(sale.total)}
-                      </Text>
-
-                      <Text className="mt-1 text-xs text-textMuted">
-                        {sale.status}
-                      </Text>
-                    </View>
-                  </View>
-
-                  {index < recentSales.length - 1 && (
-                    <View className="ml-4 h-px bg-border" />
-                  )}
-                </View>
+                <SaleCardHome
+                  key={sale.id}
+                  sale={sale}
+                  showBorder={index < recentSales.length - 1}
+                />
               ))}
             </View>
           )}

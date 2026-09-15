@@ -38,7 +38,7 @@ export function Header({
         </View>
 
         <Pressable
-          onPress={() => router.push("/private/produtcs/create")}
+          onPress={() => router.push("/(private)/produtcs/create")}
           className="h-12 w-12 items-center justify-center rounded-2xl bg-secondary active:opacity-80"
         >
           <Feather name="plus" size={24} color={colors.primary} />

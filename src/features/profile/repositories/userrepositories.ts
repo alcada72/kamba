@@ -1,8 +1,8 @@
 import { SQLiteDatabase } from "expo-sqlite";
-import { User } from "../types/user";
+import { UpadateUserDTO, User } from "../types/user";
 
 export class UserRepository {
-  constructor(private readonly db: SQLiteDatabase) { }
+  constructor(private readonly db: SQLiteDatabase) {}
 
   async create(data: Omit<User, "id">) {
     if (!data.nome.trim()) {
@@ -10,38 +10,71 @@ export class UserRepository {
     }
 
     try {
-      const result = await this.db.runAsync(`
+      const result = await this.db.runAsync(
+        `
         INSERT INTO  usuarios (
         nome,
         senha,
         telefone
         ) VALUES (?, ?, ?)
-        `, [
-        data.nome,
-        data.senha,
-        data.telefone ?? null
-      ])
+        `,
+        [data.nome, data.senha, data.telefone ?? null],
+      );
 
-      return result.lastInsertRowId
+      return result.lastInsertRowId;
     } catch (error) {
       console.log(error);
     }
   }
 
-  async getFristUser(): Promise<User | null> {
-    const result = await this.db.getFirstAsync<User>(`
+  async getFrist(id: number | string = 1): Promise<User | null> {
+    const result = await this.db.getFirstAsync<User>(
+      `
         SELECT *
         FROM usuarios
-        WHERE id = ?
-        LIMIT 1          
-        `, [1])
-    return result
+        WHERE id = ?        
+        `,
+      [id],
+    );
+    return result;
   }
 
   async getAllUser(): Promise<User[] | null> {
     const result = await this.db.getAllAsync<User>(`
         SELECT * FROM produtos         
-        `)
-    return result
+        `);
+    return result;
+  }
+
+  /**
+   * update user
+   */
+  public async update(data: UpadateUserDTO, id: string | number = 1) {
+    const fields: string[] = [];
+    const values: unknown[] = [];
+
+    Object.entries(data).forEach(([key, value]) => {
+      if (key === "id" || value === undefined) {
+        return;
+      }
+
+      fields.push(`${key} = ?`);
+      values.push(value);
+    });
+
+    if (fields.length === 0) {
+      return;
+    }
+
+    values.push(id);
+
+    await this.db.runAsync(
+      `
+      UPDATE usuarios
+      SET ${fields.join(", ")}
+      WHERE id = ?
+    `,
+      values as any,
+    );
   }
 }

@@ -7,7 +7,7 @@ import { Image, Text, View } from "react-native";
 export default function App() {
   useEffect(() => {
     const interval = setTimeout(() => {
-      router.replace("/private");
+      router.replace("/(private)");
     }, 2000);
 
     return () => {

@@ -26,3 +26,12 @@ export interface RecentSale {
   status: string;
   data_venda: string;
 }
+
+
+export interface CartProduct {
+  id: number;
+  barcode: string | null;
+  name: string;
+  price: number;
+  quantity: number;
+}

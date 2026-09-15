@@ -1,6 +1,6 @@
-export default function formatCurrency(value: number): string {
+export default function formatCurrency(value: number, frcDgt = 0): string {
   return `${value.toLocaleString("pt-AO", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: frcDgt,
+    maximumFractionDigits: frcDgt,
   })} Kz`;
 }

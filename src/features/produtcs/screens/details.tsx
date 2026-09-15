@@ -130,7 +130,7 @@ export default function ProductDetailScreen() {
         <Pressable
           onPress={() =>
             router.push({
-              pathname: "/private/produtcs/create",
+              pathname: "/(private)/produtcs/create",
               params: {
                 id,
               },
