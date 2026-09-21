@@ -1,6 +1,8 @@
-export default function formatCurrency(value: number, frcDgt = 0): string {
-  return `${value.toLocaleString("pt-AO", {
-    minimumFractionDigits: frcDgt,
-    maximumFractionDigits: frcDgt,
-  })} Kz`;
+export default function formatCurrency(value: number): string {
+  return new Intl.NumberFormat("pt-AO", {
+    style: "currency",
+    currency: "AOA",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  }).format(value);
 }

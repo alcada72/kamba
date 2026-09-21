@@ -25,17 +25,13 @@ export class ExpoPrintAdapter implements IPrint<null> {
 
   async share(data: DadosFatura): Promise<void> {
     try {
-      const html = this.buildHtml(data);
-
-      const { uri } = await Print.printToFileAsync({
-        html,
-      });
-
       const canShare = await Sharing.isAvailableAsync();
 
       if (!canShare) {
         throw new Error("A partilha não está disponível neste dispositivo.");
       }
+
+      const uri = await this.printToFile(data);
 
       await Sharing.shareAsync(uri, {
         mimeType: "application/pdf",
@@ -53,10 +49,25 @@ export class ExpoPrintAdapter implements IPrint<null> {
     }
   }
 
+  async printToFile(data: DadosFatura) {
+    const html = this.buildHtml(data);
+
+    const { uri } = await Print.printToFileAsync({
+      html,
+    });
+
+    return uri;
+  }
+
   async findAllDevicesPrint(): Promise<null[]> {
     return [null];
   }
 
+  /**
+   * buildHtml
+   * @param data
+   * @returns
+   */
   private buildHtml(data: DadosFatura): string {
     const itemsHtml = data.items
       .map(
@@ -515,6 +526,11 @@ export class ExpoPrintAdapter implements IPrint<null> {
     return formatCurrency(value);
   }
 
+  /**
+   * escapeHtml
+   * @param value
+   * @returns
+   */
   private escapeHtml(value: string): string {
     return value
       .replace(/&/g, "&amp;")

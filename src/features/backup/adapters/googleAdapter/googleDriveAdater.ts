@@ -1,14 +1,14 @@
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import { GoogleAuthAdapter } from "@/features/auth/repositories/adapters/GoogleAuthAdapter";
 import { BackupAdapter } from "../../types/backup";
 import { createBackup } from "./services/createBackup.service";
 import { deleteBackup } from "./services/deleteBackup.service";
 import { downloadBackup } from "./services/downloadBackup.service";
 import { findBackup } from "./services/findBackup.service";
 import { updateBackup } from "./services/updateBackup.service";
-
+const googleAuth = new GoogleAuthAdapter();
 export class GoogleDriveAdapter implements BackupAdapter {
   async upload(userId: string = "", data: string): Promise<void> {
-    const { accessToken } = await GoogleSignin.getTokens();
+    const accessToken = await googleAuth.getAccessToken();
 
     const backup = await findBackup(accessToken);
 
@@ -20,7 +20,7 @@ export class GoogleDriveAdapter implements BackupAdapter {
   }
 
   async download(userId: string = ""): Promise<string | null> {
-    const { accessToken } = await GoogleSignin.getTokens();
+    const accessToken = await googleAuth.getAccessToken();
 
     const backup = await findBackup(accessToken);
 
@@ -32,7 +32,7 @@ export class GoogleDriveAdapter implements BackupAdapter {
   }
 
   async exists(userId: string = ""): Promise<boolean> {
-    const { accessToken } = await GoogleSignin.getTokens();
+    const accessToken = await googleAuth.getAccessToken();
 
     const backup = await findBackup(accessToken);
 
@@ -40,7 +40,7 @@ export class GoogleDriveAdapter implements BackupAdapter {
   }
 
   async delete(userId: string = ""): Promise<void> {
-    const { accessToken } = await GoogleSignin.getTokens();
+    const accessToken = await googleAuth.getAccessToken();
 
     const backup = await findBackup(accessToken);
 

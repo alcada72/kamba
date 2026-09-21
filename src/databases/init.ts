@@ -1,8 +1,9 @@
 import { SQLiteDatabase } from "expo-sqlite";
 import { migrateV1 } from "./migrations/v1";
 import { migrateV2 } from "./migrations/v2";
+import { migrateV3 } from "./migrations/v3";
 
-const DATABASE_VERSION = 2;
+const DATABASE_VERSION = 3;
 
 export async function InitDatabase(db: SQLiteDatabase) {
   const { user_version } = (await db.getFirstAsync<{ user_version: number }>(
@@ -21,14 +22,10 @@ export async function InitDatabase(db: SQLiteDatabase) {
     currentDbVersion = 2;
   }
 
-  /*
-   * Futuras migrations:
-   *
-   * if (currentDbVersion < 3) {
-   *   await migrateV3(db);
-   *   currentDbVersion = 3;
-   * }
-   */
+  if (currentDbVersion < 3) {
+    await migrateV3(db);
+    currentDbVersion = 3;
+  }
 
   if (currentDbVersion !== DATABASE_VERSION) {
     throw new Error(`Versão do banco inválida: ${currentDbVersion}`);

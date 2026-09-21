@@ -10,13 +10,12 @@
     "newArchEnabled": true,
 
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.alcada.kilundica.kamba"
     },
 
     "android": {
-      "googleServicesFile": "./google-services.json",
       "package": "com.alcada.kilundica.kamba",
-
       "adaptiveIcon": {
         "backgroundColor": "#063023",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -96,8 +95,12 @@
           }
         }
       ],
-
-      ["@react-native-google-signin/google-signin"]
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.898877283535-7gmm7qcq9u4rdhpsf1i4jai0ob85f0nr"
+        }
+      ]
     ],
 
     "experiments": {

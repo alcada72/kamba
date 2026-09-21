@@ -1,4 +1,4 @@
-import { i18nType } from "./types/i18n";
+import { i18nType } from "../types/i18n";
 
 const pt: i18nType = {
   welcome: "Bem-vindo",
@@ -133,6 +133,7 @@ const pt: i18nType = {
   signInWithGoogle: "Entrar com o Google",
   continueWithGoogle: "Continuar com o Google",
   enterPin: "Adicione o seu PIN do Kamba",
+  pinIncorrect: "O pin inserido não está correto",
 
   name: "Nome",
   firstName: "Nome próprio",

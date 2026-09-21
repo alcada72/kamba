@@ -43,10 +43,10 @@ export default function TrunckedScreen() {
 
     if (value.length !== PIN_LENGTH) return;
 
-    if (value === userData?.senha) {
+    if (value === userData.senha) {
       setTruncked(false);
     } else {
-      setMessage("O pin inserido não está correto");
+      setMessage(t("pinIncorrect", lang));
     }
 
     setValue("");

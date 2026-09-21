@@ -8,17 +8,20 @@ export interface BackupAdapter {
   delete(userId: string): Promise<void>;
 }
 
+export type TBackupRow = Record<string, unknown>;
+
 export type TBackup = {
-  version: number;
+  version: 1;
   created_at: string;
+
   data: {
-    usuarios: unknown[];
-    categorias: unknown[];
-    produtos: unknown[];
-    faturas: unknown[];
-    vendas: unknown[];
-    itens_venda: unknown[];
-    pagamentos: unknown[];
-    movimentos_estoque: unknown[];
+    categorias: TBackupRow[];
+    produtos: TBackupRow[];
+    faturas: TBackupRow[];
+    vendas: TBackupRow[];
+    itens_venda: TBackupRow[];
+    pagamentos: TBackupRow[];
+    movimentos_estoque: TBackupRow[];
+    empresa: TBackupRow[];
   };
 };

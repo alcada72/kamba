@@ -2,7 +2,7 @@ import colors from "@/theme/colos";
 import { Feather } from "@expo/vector-icons";
 import { Pressable, Text, View } from "react-native";
 
-export const keysBoards = [
+export const keysBoards: (string | number)[][] = [
   [1, 2, 3],
   [4, 5, 6],
   [7, 8, 9],

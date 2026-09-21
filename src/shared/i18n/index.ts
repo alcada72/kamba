@@ -1,5 +1,5 @@
-import en from "./i18n/en";
-import pt from "./i18n/pt";
+import en from "./langs/en";
+import pt from "./langs/pt";
 
 type Dictionary = Record<string, string>;
 

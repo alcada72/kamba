@@ -131,6 +131,7 @@ const en = {
   signInWithGoogle: "signIn With Google",
   continueWithGoogle: "continue With Google",
   enterPin: "Enter your Kamba pin",
+  pinIncorrect: "Pin Incorrect.",
 
   // User
   name: "Name",

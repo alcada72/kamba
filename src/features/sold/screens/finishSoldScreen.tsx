@@ -16,12 +16,14 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { SendEmailModal } from "../components/sendEmailModal";
 
 export default function FinishSoldScree() {
   const { id } = useLocalSearchParams<{ id: string }>();
 
   const [fatura, setFatura] = useState<FaturaParsed | null>(null);
   const [loading, setLoading] = useState(false);
+  const [openModalEmail, setopenModalEmail] = useState(true);
 
   const { lang } = useLanguageStore();
   const db = useSQLiteContext();
@@ -134,11 +136,24 @@ export default function FinishSoldScree() {
             <Feather
               name="share"
               size={24}
+              disabled={!fatura}
               color={fatura ? colors.secondary : colors.border}
             />
           </View>
 
           <Text className="mt-2">{t("share", lang)}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => setopenModalEmail(true)}
+          disabled={!fatura}
+          className="items-center"
+        >
+          <View className="bg-primary rounded-full p-4">
+            <Feather name="inbox" size={24} color={colors.secondary} />
+          </View>
+
+          <Text className="mt-2">{t("Print", lang)}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -247,6 +262,11 @@ export default function FinishSoldScree() {
           </View>
         </View>
       </View>
+      <SendEmailModal
+        visible={openModalEmail}
+        onClose={() => setopenModalEmail(false)}
+        faturaDada={fatura.fatura_json}
+      />
     </ScrollView>
   );
 }

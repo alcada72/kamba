@@ -109,7 +109,7 @@ export default function HomeScreen() {
             <FastAcessItem
               icon="bar-chart-2"
               label={t("reports", lang)}
-              onPress={() => console.log("Relatórios")}
+              onPress={() => router.navigate("/(private)/reports")}
             />
           </View>
         </View>

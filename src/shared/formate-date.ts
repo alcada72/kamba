@@ -1,5 +1,8 @@
-export default function formatDate(value: string): string {
-  const date = new Date(value.replace(" ", "T"));
+export default function formatDate(value: string | Date): string {
+  const date =
+    typeof value === "string"
+      ? new Date(value.replace(" ", "T"))
+      : value.toISOString().split("T")[0];
 
   return date.toLocaleString("pt-AO", {
     day: "2-digit",

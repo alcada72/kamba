@@ -6,7 +6,7 @@ import { AppState, AppStateStatus } from "react-native";
 
 const INACTIVITY_TIMEOUT = 60 * 1000;
 
-export default function RootLayout() {
+export default function PublicLayout() {
   const {
     isLogged,
     isTrunckedApp,

@@ -1,20 +1,11 @@
-import { Text, TextInput, View } from "react-native";
+import { Text, TextInput, TextInputProps, View } from "react-native";
 
-export function Input({
-  label,
-  placeholder,
-  value,
-  onChangeText,
-  keyboardType = "default",
-  required = false,
-}: {
+type Props = TextInputProps & {
   label: string;
-  placeholder: string;
-  value: string;
-  onChangeText: (value: string) => void;
-  keyboardType?: "default" | "numeric" | "decimal-pad";
   required?: boolean;
-}) {
+};
+
+export function Input({ label, required = false, ...rest }: Props) {
   return (
     <View className="mt-5">
       <Text className="mb-2 text-sm font-semibold text-text">
@@ -24,11 +15,8 @@ export function Input({
       </Text>
 
       <TextInput
-        value={value}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
         placeholderTextColor="#8A948F"
-        keyboardType={keyboardType}
+        {...rest}
         className="rounded-2xl border border-border bg-surface px-4 py-4 text-base text-text"
       />
     </View>

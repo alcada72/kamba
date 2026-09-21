@@ -65,6 +65,10 @@ export class ThermalPosPrinterAdapter implements IPrint<ThermalPrinterDevice> {
     }
   }
 
+  /**
+   * findAllDevicesPrint
+   * @returns Promise<ThermalPrinterDevice[]>
+   */
   async findAllDevicesPrint(): Promise<ThermalPrinterDevice[]> {
     try {
       await this.init();
@@ -83,6 +87,11 @@ export class ThermalPosPrinterAdapter implements IPrint<ThermalPrinterDevice> {
     }
   }
 
+  /**
+   * printerHeader
+   *
+   * @returns Promise<void>
+   */
   private async printHeader(): Promise<void> {
     await ReactNativePosPrinter.printText("MINHA LOJA", {
       align: "CENTER",
@@ -97,10 +106,14 @@ export class ThermalPosPrinterAdapter implements IPrint<ThermalPrinterDevice> {
       bold: true,
       fontType: "A",
     });
-
+   
     await ReactNativePosPrinter.newLine();
   }
 
+  /**
+   * printSaleInfo
+   * @param data
+   */
   private async printSaleInfo(data: DadosFatura): Promise<void> {
     await ReactNativePosPrinter.printText(`Venda: ${data.saleId}`, {
       align: "LEFT",

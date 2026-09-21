@@ -19,13 +19,10 @@ export const SaleCardHome = ({ sale, showBorder }: Porops) => {
   return (
     <TouchableOpacity onPress={navigate}>
       <View className="flex-row items-center px-4 py-4">
-        {/* ÍCONE */}
 
         <View className="mr-3 h-11 w-11 items-center justify-center rounded-xl bg-green-50">
           <Text className="text-xl">🧾</Text>
         </View>
-
-        {/* INFORMAÇÃO */}
 
         <View className="flex-1">
           <Text className="font-semibold text-text">
@@ -36,8 +33,6 @@ export const SaleCardHome = ({ sale, showBorder }: Porops) => {
             {formatDate(sale.data_venda)}
           </Text>
         </View>
-
-        {/* TOTAL */}
 
         <View className="items-end">
           <Text className="font-bold text-primary">

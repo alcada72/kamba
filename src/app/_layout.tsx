@@ -1,6 +1,8 @@
 import { InitDatabase } from "@/databases/init";
 import { useAuthState } from "@/features/auth/store/auth.store";
+import { useBackupStore } from "@/features/backup/store/backup.store";
 import { assetsPath } from "@/shared/assets";
+import { hydrateStores } from "@/shared/helpers/hydrateStores";
 import colors from "@/theme/colos";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { router, Stack, usePathname, useSegments } from "expo-router";
@@ -13,16 +15,21 @@ import "./global.css";
 
 GoogleSignin.configure({
   webClientId:
-    "856020489210-0fb7trui84gvjiskt11uog3cvucpcual.apps.googleusercontent.com",
-  scopes: ["https://www.googleapis.com/auth/drive.appdata"],
-  offlineAccess: false,
+    "898877283535-ibbhnhkgrbomi4mvh2tq08cfqu3m2a62.apps.googleusercontent.com",
+  iosClientId:
+    "898877283535-7gmm7qcq9u4rdhpsf1i4jai0ob85f0nr.apps.googleusercontent.com",
+  scopes: [
+    "https://www.googleapis.com/auth/drive.appdata",
+    "https://www.googleapis.com/auth/gmail.send",
+  ],
 });
 
 export default function RootLayout() {
-  const { isLogged, isTrunckedApp, activeTrunckedApp } = useAuthState();
+  const { isLogged, isTrunckedApp } = useAuthState();
+
+  const { downloadBackupIsCompleted } = useBackupStore();
 
   const segments = useSegments();
-
   const pathname = usePathname();
 
   const lastPrivateRoute = useRef<string | null>(null);
@@ -30,26 +37,20 @@ export default function RootLayout() {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
+    hydrateStores().then(() => {
+      setIsReady(true);
+    });
+  }, []);
+
+  useEffect(() => {
     if (!isLogged) {
       return;
     }
 
-    if (pathname.startsWith("/private")) {
+    if (segments[0] === "(private)") {
       lastPrivateRoute.current = pathname;
     }
-  }, [pathname, isLogged]);
-
-  useEffect(() => {
-    const unsubscribe = useAuthState.persist.onFinishHydration(() => {
-      setIsReady(true);
-    });
-
-    if (useAuthState.persist.hasHydrated()) {
-      setIsReady(true);
-    }
-
-    return unsubscribe;
-  }, []);
+  }, [segments, pathname, isLogged]);
 
   useEffect(() => {
     if (!isReady) {
@@ -67,8 +68,16 @@ export default function RootLayout() {
     }
 
     if (isTrunckedApp) {
-      if (segments[1] !== "truncked") {
+      if (currentGroup !== "truncked") {
         router.replace("/(auth)/truncked");
+      }
+
+      return;
+    }
+
+    if (!downloadBackupIsCompleted) {
+      if (pathname !== "/settings/backup/restore") {
+        router.replace("/(private)/settings/backup/restore");
       }
 
       return;
@@ -79,12 +88,20 @@ export default function RootLayout() {
 
       return;
     }
+
     if (currentGroup !== "(private)") {
       router.replace("/(private)");
 
       return;
     }
-  }, [isReady, isLogged, isTrunckedApp, segments, pathname, activeTrunckedApp]);
+  }, [
+    isReady,
+    isLogged,
+    isTrunckedApp,
+    downloadBackupIsCompleted,
+    segments,
+    pathname,
+  ]);
 
   if (!isReady) {
     return <SuspenseComponent />;

@@ -96,6 +96,7 @@ export default function SettingsScreen() {
             colorIcon={colors.error}
             icon="lock"
             label="security"
+            link={"/(private)/settings/backup/restore"}
           />
 
           <NavigationCard
