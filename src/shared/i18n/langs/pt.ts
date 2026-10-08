@@ -24,7 +24,7 @@ const pt: i18nType = {
   reports: "Relatórios",
   invoice: "Fatura",
   invoiceNumber: "Número da fatura",
-
+  category: "Categoria",
   summary: "Resumo",
   todaysSales: "Vendas hoje",
   recentSales: "Vendas recentes",
@@ -66,6 +66,7 @@ const pt: i18nType = {
   activeCodeDisableDescription:
     "Digite o código de {length} dígitos para desativar o bloqueio",
 
+  //Printer
   SelectPrinter: "Selecione uma impressora",
   LookingPrinters: "A procurar impressoras...",
   NoPrinterFound: "Nenhuma impressora encontrada",
@@ -142,12 +143,19 @@ const pt: i18nType = {
   phone: "Telefone",
   address: "Morada",
 
+  // enterprise
+
+  enterprise: "Empresa",
+  companyName: "Nome da empresa",
+  TaxIdentificationNumber: "Número de identificação fiscal",
+
   success: "Sucesso",
   error: "Erro",
   warning: "Aviso",
   information: "Informação",
   noResults: "Nenhum resultado encontrado.",
   somethingWentWrong: "Algo correu mal.",
+  fillAllInput: "Preencha todos os campos.",
   savedSuccessfully: "Guardado com sucesso.",
   deletedSuccessfully: "Eliminado com sucesso.",
 
@@ -165,9 +173,12 @@ const pt: i18nType = {
 
   AllowCamera: "Permitir câmera",
   CameraAccess: "Acesso à câmera",
+  camera: "Câmera",
 
   language: "Idioma",
   theme: "Tema",
+  changelanguage: "Trocar idioma",
+  LastUpdate: "Última atualização",
   lightMode: "Modo claro",
   darkMode: "Modo escuro",
   notificationsEnabled: "Notificações ativadas",

@@ -13,9 +13,7 @@ import { InfoRow } from "@/features/backup/components/infoRow";
 import formatDate from "@/shared/formate-date";
 import getErrorMessage from "@/shared/helpers/getErroMessage";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { GoogleDriveAdapter } from "../adapters/googleAdapter/googleDriveAdater";
 import BackupRepositories from "../repositories/backupRepositories";
-import { BackupService } from "../services/backup.service";
 import { useBackupStore } from "../store/backup.store";
 import { TBackup } from "../types/backup";
 
@@ -25,21 +23,24 @@ export default function RestoreBackupScreen() {
   const [backup, setBackup] = useState<TBackup | null>(null);
 
   const [backupJson, setBackupJson] = useState<string | null>(null);
-  const { setDownloadBackupIsCompleted } = useBackupStore();
+  const { setDownloadBackupIsCompleted, downloadBackupIsCompleted } =
+    useBackupStore();
 
   const [loading, setLoading] = useState(false);
   const [restoring, setRestoring] = useState(false);
 
-  const backupService = new BackupService(new GoogleDriveAdapter());
+  //const backupService = new BackupService(new GoogleDriveAdapter());
 
   const backupRepository = new BackupRepositories(db);
 
   async function handleLoadBackup() {
     setDownloadBackupIsCompleted(true);
+    console.log("passou", downloadBackupIsCompleted);
+
     try {
       setLoading(true);
 
-      const json = await backupService.restore("google_drive");
+      /*       const json = await backupService.restore("google_drive");
 
       if (!json) {
         Alert.alert(
@@ -55,7 +56,7 @@ export default function RestoreBackupScreen() {
       validateBackup(parsed);
 
       setBackup(parsed);
-      setBackupJson(json);
+      setBackupJson(json); */
     } catch (error) {
       console.error("Erro ao buscar backup:", error);
 
@@ -150,11 +151,11 @@ export default function RestoreBackupScreen() {
 
         {!backup && (
           <Pressable
-            className={`min-h-[52px] items-center justify-center rounded-xl bg-blue-600 px-5 ${
+            className={`min-h-[52px] items-center justify-center rounded-xl bg-primary px-5 ${
               loading ? "opacity-60" : ""
             }`}
             onPress={handleLoadBackup}
-            disabled={loading || restoring}
+            // disabled={loading || restoring}
           >
             {loading ? (
               <ActivityIndicator color="#fff" />

@@ -2,7 +2,6 @@ import { Feather } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -16,9 +15,9 @@ import { Input } from "@/shared/components/input";
 import { t } from "@/shared/i18n";
 import { useLanguageStore } from "@/store/i18n.store";
 
+import { LoandingModal } from "@/shared/components/loading-modal";
 import colors from "@/theme/colos";
 import { useSQLiteContext } from "expo-sqlite";
-import { StatusBar } from "expo-status-bar";
 import { BarcodeScannerModal } from "../components/BarcodeScannerModal";
 import { SectionTitle } from "../components/SectionTitle";
 import {
@@ -121,18 +120,8 @@ export default function CreateProductScreen() {
     }
   };
 
-  if (loading) {
-    return (
-      <View className="flex-1 items-center justify-center bg-background">
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
-  }
-
   return (
     <View className="flex-1 bg-background">
-      <StatusBar style="dark" />
-
       <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -385,6 +374,8 @@ export default function CreateProductScreen() {
           }}
         />
       </KeyboardAvoidingView>
+
+      <LoandingModal visible={loading} />
     </View>
   );
 }

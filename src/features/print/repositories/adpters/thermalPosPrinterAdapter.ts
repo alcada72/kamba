@@ -3,6 +3,7 @@ import {
   ThermalPrinterDevice,
 } from "react-native-thermal-pos-printer";
 
+import { Empresa } from "@/features/enterprise/types/enterprise";
 import formatCurrency from "@/shared/format-currecy";
 import { requestBluetoothPermissions } from "@/shared/requestePermisionBluth";
 import { DadosFatura, FacturaLargura, IPrint } from "../../types";
@@ -10,7 +11,11 @@ import { DadosFatura, FacturaLargura, IPrint } from "../../types";
 export class ThermalPosPrinterAdapter implements IPrint<ThermalPrinterDevice> {
   private readonly largura: FacturaLargura = "58mm";
 
-  async print(data: DadosFatura, printer: ThermalPrinterDevice): Promise<void> {
+  async print(
+    data: DadosFatura,
+    enterprise: Empresa,
+    printer: ThermalPrinterDevice,
+  ): Promise<void> {
     let connected = false;
 
     try {
@@ -21,7 +26,7 @@ export class ThermalPosPrinterAdapter implements IPrint<ThermalPrinterDevice> {
         connected = true;
       }
 
-      await this.printHeader();
+      await this.printHeader(enterprise);
 
       await this.printSaleInfo(data);
 
@@ -92,8 +97,8 @@ export class ThermalPosPrinterAdapter implements IPrint<ThermalPrinterDevice> {
    *
    * @returns Promise<void>
    */
-  private async printHeader(): Promise<void> {
-    await ReactNativePosPrinter.printText("MINHA LOJA", {
+  private async printHeader(empresa: Empresa): Promise<void> {
+    await ReactNativePosPrinter.printText(empresa.nome, {
       align: "CENTER",
       size: 18,
       bold: true,
@@ -106,7 +111,7 @@ export class ThermalPosPrinterAdapter implements IPrint<ThermalPrinterDevice> {
       bold: true,
       fontType: "A",
     });
-   
+
     await ReactNativePosPrinter.newLine();
   }
 

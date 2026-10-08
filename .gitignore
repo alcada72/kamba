@@ -44,3 +44,7 @@ app-example
 
 # Google Config
 google-services.json
+
+# Markdown Exemple
+/reuniao.md
+test.*

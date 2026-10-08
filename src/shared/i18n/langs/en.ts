@@ -22,6 +22,7 @@ const en = {
   products: "Products",
   product: "Product",
   customers: "Customers",
+  category: "Category",
   reports: "Reports",
   summary: "Summary",
   todaysSales: "Today's sales",
@@ -48,6 +49,7 @@ const en = {
   Tax: "VAT / Taxes",
   Total: "Total",
 
+  // Printer
   SelectPrinter: "Select a printer",
   LookingPrinters: "Looking for printers...",
   NoPrinterFound: "No printer found",
@@ -141,11 +143,17 @@ const en = {
   phone: "Phone",
   address: "Address",
 
+  // enterprise
+  enterprise: "Enterprise",
+  companyName: "Company Name",
+  TaxIdentificationNumber: "Tax identification number",
+
   // Messages
   success: "Success",
   error: "Error",
   warning: "Warning",
   information: "Information",
+  fillAllInput: "Fill in all the fields.",
   noResults: "No results found.",
   somethingWentWrong: "Something went wrong.",
   savedSuccessfully: "Saved successfully.",
@@ -168,10 +176,13 @@ const en = {
   //Camera
   AllowCamera: "Allow camera",
   CameraAccess: "Camera access",
+  camera: "Camera",
 
   // Settings
   language: "Language",
   theme: "Theme",
+  changelanguage: "Change language",
+  LastUpdate: "Last update",
   lightMode: "Light mode",
   darkMode: "Dark mode",
   notificationsEnabled: "Notifications enabled",

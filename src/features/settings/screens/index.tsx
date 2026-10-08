@@ -14,7 +14,6 @@ export default function SettingsScreen() {
   const { lang, switchLanguage } = useLanguageStore();
   const [user, setuser] = useState<User>();
   const db = useSQLiteContext();
-  const userRepositories = new UserRepository(db);
 
   const isPortuguese = lang === "pt";
 
@@ -24,6 +23,7 @@ export default function SettingsScreen() {
 
   const loadDataUser = async () => {
     try {
+      const userRepositories = new UserRepository(db);
       const res = await userRepositories.getFrist(1);
       if (!res) return;
       setuser(res);
@@ -40,7 +40,7 @@ export default function SettingsScreen() {
     >
       <GeneralProfileHeader user={user} />
 
-      <View className="mb-6 mt-3 px-5">
+      <View className="my-6 mt-3 px-5">
         <Text className="mb-3 text-sm font-semibold uppercase tracking-wider text-textMuted">
           {t("general", lang)}
         </Text>
@@ -68,8 +68,6 @@ export default function SettingsScreen() {
 
             <Text className="text-xl text-textMuted">›</Text>
           </Pressable>
-
-          <View className="ml-4 h-px bg-border" />
         </View>
       </View>
 
@@ -79,6 +77,13 @@ export default function SettingsScreen() {
         </Text>
 
         <View className="overflow-hidden rounded-2xl border border-border bg-surface">
+          <NavigationCard
+            colorIcon={colors.success}
+            icon="briefcase"
+            label="enterprise"
+            link={"/(private)/profile/enterprise"}
+          />
+
           <NavigationCard
             colorIcon={colors.secondary}
             icon="bell"
@@ -94,7 +99,7 @@ export default function SettingsScreen() {
 
           <NavigationCard
             colorIcon={colors.error}
-            icon="lock"
+            icon="info"
             label="security"
             link={"/(private)/settings/backup/restore"}
           />
@@ -115,9 +120,13 @@ export default function SettingsScreen() {
         </Text>
 
         <View className="rounded-2xl border border-border bg-surface px-4">
-          <NavigationCard label="about" />
-          <NavigationCard label="terms" />
-          <NavigationCard label="privacy" showBorder={false} />
+          <NavigationCard label="about" link={"/(public)/about"} />
+          <NavigationCard label="terms" link={"/(public)/terms"} />
+          <NavigationCard
+            label="privacy"
+            link={"/(public)/privacy"}
+            showBorder={false}
+          />
         </View>
       </View>
 

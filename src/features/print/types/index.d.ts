@@ -1,3 +1,4 @@
+import { Empresa } from "@/features/enterprise/types/enterprise";
 import { PaymentMethod } from "@/shared/types/PaymentMethod";
 
 export type FacturaLargura = "58mm" | "80mm";
@@ -21,6 +22,10 @@ export type DadosFatura = {
 };
 
 export interface IPrint<IPrinter> {
-  print(data: DadosFatura, printer: IPrinter): Promise<void>;
+  print(
+    data: DadosFatura,
+    enterpise: Empresa,
+    printer: IPrinter,
+  ): Promise<void>;
   findAllDevicesPrint(): Promise<IPrinter[]>;
 }

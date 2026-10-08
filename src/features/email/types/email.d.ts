@@ -9,6 +9,6 @@ export interface SendEmailParams {
   };
 }
 
-export interface EmailAdapter {
+export interface IEmailAdapter {
   send(params: SendEmailParams): Promise<void>;
 }

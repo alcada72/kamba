@@ -1,11 +1,11 @@
 import { GoogleAuthAdapter } from "@/features/auth/repositories/adapters/GoogleAuthAdapter";
 
-import { EmailAdapter, SendEmailParams } from "../../types/email";
+import { IEmailAdapter, SendEmailParams } from "../../types/email";
 import { sendEmail } from "./services/sendEmail.service";
 
 const googleAuth = new GoogleAuthAdapter();
 
-export class GmailAdapter implements EmailAdapter {
+export class GmailAdapter implements IEmailAdapter {
   async send({
     to,
     body,

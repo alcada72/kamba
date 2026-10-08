@@ -33,5 +33,5 @@ export async function InitDatabase(db: SQLiteDatabase) {
 
   await db.execAsync(`PRAGMA user_version = ${DATABASE_VERSION}`);
 
-  console.log(`Banco inicializado. Versão: ${DATABASE_VERSION}`);
+  console.log(`Banco inicializado. \n Versão do banco: ${DATABASE_VERSION}`);
 }

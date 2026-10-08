@@ -8,26 +8,22 @@ interface Props {
 }
 
 export function LoandingModal({ visible, onClose }: Props) {
-  const handleClose = () => {
-    onClose?.();
-  };
-
   return (
     <Modal
       visible={visible}
-      animationType="slide"
-      presentationStyle="fullScreen"
-      onRequestClose={handleClose}
+      transparent
+      animationType="fade"
+      onRequestClose={onClose}
     >
       <View
         style={{
           flex: 1,
-          backgroundColor: colors.primary,
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
           alignItems: "center",
           justifyContent: "center",
         }}
       >
-        <ActivityIndicator size={200} color={colors.secondary} />
+        <ActivityIndicator size={80} color={colors.secondary} />
       </View>
     </Modal>
   );

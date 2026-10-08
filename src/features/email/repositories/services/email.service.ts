@@ -1,7 +1,7 @@
-import { EmailAdapter, SendEmailParams } from "../../types/email";
+import { IEmailAdapter, SendEmailParams } from "../../types/email";
 
 export default class EmailService {
-  constructor(private readonly adapter: EmailAdapter) {}
+  constructor(private readonly adapter: IEmailAdapter) {}
 
   /**
    * =============================

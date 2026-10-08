@@ -1,3 +1,4 @@
+import EnterpriseRepository from "@/features/enterprise/repositories/enterpriseRepository";
 import { FaturaRepository } from "@/features/faturas/repository/faturaRepository";
 import { FaturaParsed } from "@/features/faturas/types/indx";
 import { expoPrintAdapter } from "@/features/print/repositories/adpters/expo-print-adapter";
@@ -23,14 +24,18 @@ export default function FinishSoldScree() {
 
   const [fatura, setFatura] = useState<FaturaParsed | null>(null);
   const [loading, setLoading] = useState(false);
-  const [openModalEmail, setopenModalEmail] = useState(true);
+  const [openModalEmail, setopenModalEmail] = useState(false);
 
   const { lang } = useLanguageStore();
   const db = useSQLiteContext();
 
   const faturaRepository = new FaturaRepository(db);
 
+  const enteproiseRepository = new EnterpriseRepository(db);
+
   useEffect(() => {
+    console.log("Id da factura", id);
+
     loadFaturaData();
   }, [id]);
 
@@ -56,7 +61,10 @@ export default function FinishSoldScree() {
     if (!fatura) return;
 
     try {
-      await expoPrintAdapter.share(fatura.fatura_json);
+      const company = await enteproiseRepository.getById();
+      if (!company) return;
+
+      await expoPrintAdapter.share(fatura.fatura_json, company);
     } catch (error) {
       console.error("Erro ao compartilhar fatura:", error);
     }
@@ -153,7 +161,7 @@ export default function FinishSoldScree() {
             <Feather name="inbox" size={24} color={colors.secondary} />
           </View>
 
-          <Text className="mt-2">{t("Print", lang)}</Text>
+          <Text className="mt-2">Email</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -262,6 +270,7 @@ export default function FinishSoldScree() {
           </View>
         </View>
       </View>
+
       <SendEmailModal
         visible={openModalEmail}
         onClose={() => setopenModalEmail(false)}

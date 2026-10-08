@@ -8,8 +8,13 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 
 import SalesContributionChart from "../components/contribuitiosChart";
+import { ResumeCard } from "../components/resumeCard";
 import ReportsRepository from "../repositories/reportsRepositories";
-import { SalesSummary } from "../types/reports";
+import {
+  CategoryPlusSale,
+  ProductPlusSale,
+  SalesSummary,
+} from "../types/reports";
 
 export default function ReportsScreen() {
   const lang = useLanguageStore((stt) => stt.lang);
@@ -25,6 +30,12 @@ export default function ReportsScreen() {
     ticket_medio: 0,
   });
 
+  const [categories, setcategories] = useState<CategoryPlusSale[]>([]);
+
+  const [productsPlusSale, setProductsPlusSale] = useState<ProductPlusSale[]>(
+    [],
+  );
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -34,13 +45,18 @@ export default function ReportsScreen() {
 
         const reportsRepository = new ReportsRepository(db);
 
-        const [salesSummary, salesByDay] = await Promise.all([
-          reportsRepository.getSalesSummary(),
-          reportsRepository.getQtdSaleDay(),
-        ]);
+        const [salesSummary, salesByDay, salesCategorie, productPlusSale] =
+          await Promise.all([
+            reportsRepository.getSalesSummary(),
+            reportsRepository.getQtdSaleDay(),
+            reportsRepository.getCategoriesPlusSale(),
+            reportsRepository.getProductsPlusSale(),
+          ]);
 
         setSummary(salesSummary);
         setContributionsByDay(salesByDay);
+        setcategories(salesCategorie);
+        setProductsPlusSale(productPlusSale);
       } catch (error) {
         console.error("Erro ao carregar relatórios:", error);
       } finally {
@@ -59,7 +75,7 @@ export default function ReportsScreen() {
       }}
     >
       <GeneralHeader>
-        <Text numberOfLines={1} className="text-2xl font-semibold">
+        <Text numberOfLines={1} className="text-2xl font-bold text-secondary">
           {t("reports", lang)}
         </Text>
       </GeneralHeader>
@@ -91,51 +107,97 @@ export default function ReportsScreen() {
             {/* Resumo */}
             <View className="flex-row flex-wrap justify-between">
               {/* Faturamento */}
-              <View className="mb-4 w-[48%] rounded-2xl bg-white p-4">
-                <Text className="text-sm font-medium text-gray-500">
-                  Faturamento
-                </Text>
-
-                <Text
-                  numberOfLines={1}
-                  className="mt-2 text-xl font-bold text-gray-900"
-                >
-                  {formatCurrency(summary.faturamento)}
-                </Text>
-              </View>
+              <ResumeCard
+                title={"Faturamento"}
+                value={formatCurrency(summary.faturamento)}
+              />
 
               {/* Vendas */}
-              <View className="mb-4 w-[48%] rounded-2xl bg-white p-4">
-                <Text className="text-sm font-medium text-gray-500">
-                  Vendas
-                </Text>
-
-                <Text className="mt-2 text-2xl font-bold text-gray-900">
-                  {summary.quantidade_vendas}
-                </Text>
-              </View>
+              <ResumeCard title={"Vendas"} value={summary.quantidade_vendas} />
 
               {/* Ticket médio */}
-              <View className="mb-4 w-[48%] rounded-2xl bg-white p-4">
-                <Text className="text-sm font-medium text-gray-500">
-                  Ticket médio
-                </Text>
-
-                <Text
-                  numberOfLines={1}
-                  className="mt-2 text-xl font-bold text-gray-900"
-                >
-                  {formatCurrency(summary.ticket_medio)}
-                </Text>
-              </View>
+              <ResumeCard
+                title={"Ticket médio"}
+                value={formatCurrency(summary.ticket_medio)}
+              />
 
               {/* Produtos vendidos */}
-              <View className="mb-4 w-[48%] rounded-2xl bg-white p-4">
-                <Text className="text-sm font-medium text-gray-500">
-                  Produtos vendidos
-                </Text>
+              <ResumeCard
+                title={"Produtos vendidos"}
+                value={productsPlusSale.length}
+              />
+            </View>
 
-                <Text className="mt-2 text-2xl font-bold text-gray-900">—</Text>
+            {/* Produtos mais vendidos  */}
+            <View className="rounded-2xl bg-white p-5 mb-4">
+              <Text className="text-lg font-bold text-gray-900">
+                Produtos Mais Vendidos
+              </Text>
+              <View className="flex-row gap-4 items-center justify-between mb-2 border-b border-border">
+                <Text className="flex-1 text-base font-semibold">
+                  {t("category", lang)}
+                </Text>
+                <Text className="text-base text-start font-semibold  w-12">
+                  Qtd.
+                </Text>
+                <Text className=" text-base ml-5 font-semibold">Valor</Text>
+              </View>
+              <View>
+                {productsPlusSale.slice(0, 10).map((item) => (
+                  <View
+                    key={item.produto_id}
+
+                    className="flex-row items-center gap-4 justify-between"
+                  >
+                    <Text numberOfLines={1} className="flex-1 text-start">
+                      {item.nome}
+                    </Text>
+
+                    <Text numberOfLines={1} className="text-center  w-20">
+                      {item.quantidade_vendida} de {item.numero_vendas}
+                      {t("sale", lang)}
+                    </Text>
+                    <Text numberOfLines={1} className="text-center w-20">
+                      {formatCurrency(item.faturamento)}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+
+            {/* Vendas por categpria  */}
+            <View className="rounded-2xl bg-white p-5 mb-4">
+              <Text className="text-lg font-bold text-gray-900">
+                Vendas por categorias
+              </Text>
+              <View className="flex-row gap-4 items-center justify-between mb-2 border-b border-border">
+                <Text className="flex-1 text-base font-semibold">
+                  {t("category", lang)}
+                </Text>
+                <Text className="text-base text-start font-semibold  w-12">
+                  Qtd.
+                </Text>
+                <Text className=" text-base ml-5 font-semibold"> Valor </Text>
+              </View>
+              <View>
+                {categories.map((item) => (
+                  <View
+                    key={item.categoria_id}
+
+                    className="flex-row items-center gap-4 justify-between"
+                  >
+                    <Text numberOfLines={1} className="flex-1 text-start">
+                      {item.categoria}
+                    </Text>
+
+                    <Text className="text-center  w-12">
+                      {item.quantidade_vendida}
+                    </Text>
+                    <Text className="text-center w-20">
+                      {formatCurrency(item.faturamento)}
+                    </Text>
+                  </View>
+                ))}
               </View>
             </View>
 

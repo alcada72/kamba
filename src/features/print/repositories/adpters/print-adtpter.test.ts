@@ -1,8 +1,8 @@
+import { Empresa } from "@/features/enterprise/types/enterprise";
 import { DadosFatura, IPrint } from "../../types";
 
 class PrinterAdapterTeste implements IPrint<null> {
-  constructor() {}
-  print(data: DadosFatura, printer: null): Promise<void> {
+  print(data: DadosFatura, enterprise: Empresa, printer: null): Promise<void> {
     throw new Error("Method not implemented.");
   }
   findAllDevicesPrint(): Promise<null[]> {

@@ -81,6 +81,7 @@ export default function HomeScreen() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerClassName="px-5 pb-10"
+        overScrollMode="never"
       >
         <View className="mt-8">
           <Text className="mb-4 text-xl font-bold text-text">

@@ -1,19 +1,18 @@
-import { InitDatabase } from "@/databases/init";
+import { InitDatabase } from "@/databases";
 import { useAuthState } from "@/features/auth/store/auth.store";
 import { useBackupStore } from "@/features/backup/store/backup.store";
 import { assetsPath } from "@/shared/assets";
 import { hydrateStores } from "@/shared/helpers/hydrateStores";
 import colors from "@/theme/colos";
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { router, Stack, usePathname, useSegments } from "expo-router";
 import { SQLiteProvider } from "expo-sqlite";
 import { StatusBar } from "expo-status-bar";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Image, Text, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import "./global.css";
 
-GoogleSignin.configure({
+/* GoogleSignin.configure({
   webClientId:
     "898877283535-ibbhnhkgrbomi4mvh2tq08cfqu3m2a62.apps.googleusercontent.com",
   iosClientId:
@@ -22,7 +21,7 @@ GoogleSignin.configure({
     "https://www.googleapis.com/auth/drive.appdata",
     "https://www.googleapis.com/auth/gmail.send",
   ],
-});
+}); */
 
 export default function RootLayout() {
   const { isLogged, isTrunckedApp } = useAuthState();
@@ -31,8 +30,6 @@ export default function RootLayout() {
 
   const segments = useSegments();
   const pathname = usePathname();
-
-  const lastPrivateRoute = useRef<string | null>(null);
 
   const [isReady, setIsReady] = useState(false);
 
@@ -43,21 +40,15 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
-    if (!isLogged) {
-      return;
-    }
-
-    if (segments[0] === "(private)") {
-      lastPrivateRoute.current = pathname;
-    }
-  }, [segments, pathname, isLogged]);
-
-  useEffect(() => {
     if (!isReady) {
       return;
     }
 
     const currentGroup = segments[0];
+
+    if (currentGroup === "(public)") {
+      return;
+    }
 
     if (!isLogged) {
       if (currentGroup !== "(auth)") {
@@ -79,12 +70,6 @@ export default function RootLayout() {
       if (pathname !== "/settings/backup/restore") {
         router.replace("/(private)/settings/backup/restore");
       }
-
-      return;
-    }
-
-    if (currentGroup === "(auth)" && lastPrivateRoute.current) {
-      router.replace(lastPrivateRoute.current as any);
 
       return;
     }

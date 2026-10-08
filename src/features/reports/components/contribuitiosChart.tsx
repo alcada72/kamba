@@ -1,12 +1,12 @@
 import formatDate from "@/shared/formate-date";
 import getContributionLevel from "@/shared/getContribuitionLevel";
 import React, { useMemo } from "react";
-import { Pressable, Text, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 const CELL_SIZE = 14;
 const CELL_GAP = 4;
 
-const colors = [
+const colorsLevel = [
   "#E5E7EB", // 0 - sem vendas
   "#DCFCE7", // 1
   "#86EFAC", // 2-3
@@ -23,8 +23,8 @@ function createDate(date: string) {
 function getStartDate() {
   const today = new Date();
 
-  // Aproximadamente 12 meses atrás
-  const start = new Date(today.getFullYear(), today.getMonth() - 11, 1);
+  // Aproximadamente 5 meses atrás
+  const start = new Date(today.getFullYear(), today.getMonth() - 4, 1);
 
   // Volta para o domingo da semana
   start.setDate(start.getDate() - start.getDay());
@@ -147,7 +147,7 @@ export default function SalesContributionChart({
   }, [weeks]);
 
   return (
-    <View className="rounded-2xl bg-white p-5">
+    <View className="rounded-2xl bg-white p-4">
       {/* Header */}
       <View className="mb-5">
         <Text className="text-lg font-bold text-gray-900">
@@ -159,84 +159,91 @@ export default function SalesContributionChart({
         </Text>
       </View>
 
-      {/* Gráfico */}
-      <View>
-        {/* Meses */}
-        <View className="mb-2 ml-8 flex-row">
-          {weeks.map((_, index) => {
-            const month = monthLabels.find((item) => item.index === index);
-
-            return (
-              <View
-                key={index}
-                style={{
-                  width: CELL_SIZE + CELL_GAP,
-                }}
-              >
-                {month && (
-                  <Text numberOfLines={1} className="text-[10px] text-gray-500">
-                    {month.label}
-                  </Text>
-                )}
-              </View>
-            );
-          })}
+      <View className="flex-row items-end">
+        {/* Dias da semana */}
+        <View
+          className="mr-px justify-between"
+          style={{
+            height: 7 * CELL_SIZE + 7 * CELL_GAP,
+          }}
+        >
+          <Text className="text-[10px] text-gray-500">Dom</Text>
+          <Text className="text-[10px] text-gray-500">Seg</Text>
+          <Text className="text-[10px] text-gray-500">Ter</Text>
+          <Text className="text-[10px] text-gray-500">Qua</Text>
+          <Text className="text-[10px] text-gray-500">Qui</Text>
+          <Text className="text-[10px] text-gray-500">Sex</Text>
+          <Text className="text-[10px] text-gray-500">Sáb</Text>
         </View>
 
-        <View className="flex-row">
-          {/* Dias da semana */}
-          <View
-            className="mr-2 justify-between"
-            style={{
-              height: 7 * CELL_SIZE + 6 * CELL_GAP,
-            }}
-          >
-            <Text className="text-[10px] text-gray-500">Dom</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {/* Gráfico */}
+          <View>
+            {/* Meses */}
+            <View className="mb-2 flex-row ">
+              {weeks.map((_, index) => {
+                const month = monthLabels.find((item) => item.index === index);
 
-            <Text className="text-[10px] text-gray-500">Qua</Text>
-
-            <Text className="text-[10px] text-gray-500">Sáb</Text>
-          </View>
-
-          {/* Semanas */}
-          <View className="flex-row">
-            {weeks.map((week, weekIndex) => (
-              <View
-                key={weekIndex}
-                className="mr-1"
-                style={{
-                  gap: CELL_GAP,
-                }}
-              >
-                {week.map((day) => (
-                  <Pressable
-                    key={day.date}
-                    onPress={() => {
-                      console.log({
-                        data: formatTooltipDate(day.date),
-                        vendas: day.quantity,
-                        faturamento: day.faturamento,
-                      });
-                    }}
-                    className="rounded-[3px] border border-gray-700"
+                return (
+                  <View
+                    key={index}
                     style={{
-                      width: CELL_SIZE,
-                      height: CELL_SIZE,
-                      backgroundColor: colors[day.level],
+                      width: CELL_SIZE + CELL_GAP,
                     }}
-                  />
-                ))}
-              </View>
-            ))}
+                  >
+                    {month && (
+                      <Text
+                        numberOfLines={1}
+                        className="text-[10px] text-start text-gray-500"
+                      >
+                        {month.label}
+                      </Text>
+                    )}
+                  </View>
+                );
+              })}
+            </View>
+
+            {/* Semanas */}
+            <View className="flex-row">
+              {weeks.map((week, weekIndex) => (
+                <View
+                  key={weekIndex}
+                  className="mr-1 "
+                  style={{
+                    gap: CELL_GAP,
+                  }}
+                >
+                  {week.map((day) => (
+                    <TouchableOpacity
+                      key={day.date}
+                      onPress={() => {
+                        console.log({
+                          data: formatTooltipDate(day.date),
+                          vendas: day.quantity,
+                          faturamento: day.faturamento,
+                        });
+                      }}
+                      className="rounded-[3px] border border-gray-700"
+                      style={{
+                        width: CELL_SIZE,
+                        height: CELL_SIZE,
+                        backgroundColor: colorsLevel[day.level],
+                      }}
+                    />
+                  ))}
+                </View>
+              ))}
+            </View>
           </View>
-        </View>
+        </ScrollView>
       </View>
 
       {/* Legenda */}
-      <View className="mt-5 flex-row items-center justify-end">
+      <View className="mt-5 flex-row items-center justify-center">
         <Text className="mr-2 text-xs text-gray-500">Menos</Text>
 
-        {colors.map((color, index) => (
+        {colorsLevel.map((color, index) => (
           <View
             key={index}
             className="mr-1 rounded-[3px] border-gray-700"

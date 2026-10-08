@@ -8,7 +8,7 @@ import {
 class EnterpriseRepository {
   constructor(private readonly db: SQLiteDatabase) {}
   /**
-   * create
+   * criar a empresa
    * @param data
    */
   public async create(data: CreateEmpresaDTO) {
@@ -18,7 +18,7 @@ class EnterpriseRepository {
 
     const result = await this.db.runAsync(
       `
-        INSET INTO empresa (
+        INSERT INTO empresa (
         nome,
         nif,
         telefone,
@@ -33,7 +33,7 @@ class EnterpriseRepository {
   }
 
   /**
-   * update
+   * Atualiza os dados da empresa.
    * @param id
    * @param data
    */
@@ -68,7 +68,7 @@ class EnterpriseRepository {
   }
 
   /**
-   * getById
+   * Busacar a empresa pelo se Id.
    * @param [id]
    */
   public async getById(id: number = 1): Promise<Empresa | null> {

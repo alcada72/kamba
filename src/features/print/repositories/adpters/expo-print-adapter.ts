@@ -1,13 +1,18 @@
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 
+import { Empresa } from "@/features/enterprise/types/enterprise";
 import formatCurrency from "@/shared/format-currecy";
 import { DadosFatura, IPrint } from "../../types";
 
 export class ExpoPrintAdapter implements IPrint<null> {
-  async print(data: DadosFatura, _printer: null): Promise<void> {
+  async print(
+    data: DadosFatura,
+    enterprise: Empresa,
+    _printer: null,
+  ): Promise<void> {
     try {
-      const html = this.buildHtml(data);
+      const html = this.buildHtml(data, enterprise);
 
       await Print.printAsync({
         html,
@@ -23,7 +28,7 @@ export class ExpoPrintAdapter implements IPrint<null> {
     }
   }
 
-  async share(data: DadosFatura): Promise<void> {
+  async share(data: DadosFatura, enterprise: Empresa): Promise<void> {
     try {
       const canShare = await Sharing.isAvailableAsync();
 
@@ -31,7 +36,7 @@ export class ExpoPrintAdapter implements IPrint<null> {
         throw new Error("A partilha não está disponível neste dispositivo.");
       }
 
-      const uri = await this.printToFile(data);
+      const uri = await this.printToFile(data, enterprise);
 
       await Sharing.shareAsync(uri, {
         mimeType: "application/pdf",
@@ -49,8 +54,8 @@ export class ExpoPrintAdapter implements IPrint<null> {
     }
   }
 
-  async printToFile(data: DadosFatura) {
-    const html = this.buildHtml(data);
+  async printToFile(data: DadosFatura, enterprise: Empresa) {
+    const html = this.buildHtml(data, enterprise);
 
     const { uri } = await Print.printToFileAsync({
       html,
@@ -68,11 +73,11 @@ export class ExpoPrintAdapter implements IPrint<null> {
    * @param data
    * @returns
    */
-  private buildHtml(data: DadosFatura): string {
+  private buildHtml(data: DadosFatura, enterprise: Empresa): string {
     const itemsHtml = data.items
       .map(
         (item) => `
-          <tr>
+          <tr> 
             <td class="product">
               ${this.escapeHtml(item.name)}
             </td>
@@ -97,11 +102,9 @@ export class ExpoPrintAdapter implements IPrint<null> {
 
     const discount = data.discount ?? 0;
 
-    return `
-      <!DOCTYPE html>
-
+    return ` 
+      <!doctype html>
       <html lang="pt">
-
         <head>
           <meta charset="UTF-8" />
 
@@ -113,12 +116,12 @@ export class ExpoPrintAdapter implements IPrint<null> {
 
             * {
               box-sizing: border-box;
+              margin: 0;
+              padding: 0;
             }
 
             html,
             body {
-              margin: 0;
-              padding: 0;
               background: #ffffff;
             }
 
@@ -137,8 +140,20 @@ export class ExpoPrintAdapter implements IPrint<null> {
               display: flex;
               justify-content: space-between;
               align-items: flex-start;
-              padding-bottom: 20px;
+              padding-bottom: 10px;
               border-bottom: 1px solid #222;
+            }
+            .sub-header {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: start;
+              gap: 0;
+              margin-top: 5px;
+            }
+
+            .sub-header p {
+              color: #7e7e7edd;
             }
 
             .company {
@@ -146,9 +161,8 @@ export class ExpoPrintAdapter implements IPrint<null> {
             }
 
             .company-name {
-              font-size: 26px;
+              font-size: 18px;
               font-weight: bold;
-              margin-bottom: 8px;
             }
 
             .company-info {
@@ -163,9 +177,9 @@ export class ExpoPrintAdapter implements IPrint<null> {
             }
 
             .invoice-title {
-              font-size: 22px;
+              font-size: 15px;
               font-weight: bold;
-              margin-bottom: 8px;
+              color: #063023;
             }
 
             .invoice-info {
@@ -175,8 +189,8 @@ export class ExpoPrintAdapter implements IPrint<null> {
             }
 
             .sale-info {
-              margin-top: 25px;
-              margin-bottom: 25px;
+              margin-top: 20px;
+              margin-bottom: 20px;
             }
 
             .sale-info table {
@@ -199,7 +213,7 @@ export class ExpoPrintAdapter implements IPrint<null> {
             }
 
             .items th {
-              background: #f3f4f6;
+              background: #254f42a9;
               border-top: 1px solid #ccc;
               border-bottom: 1px solid #ccc;
               padding: 10px 8px;
@@ -237,7 +251,7 @@ export class ExpoPrintAdapter implements IPrint<null> {
 
             .totals-container {
               display: flex;
-              justify-content: flex-end;
+              justify-content: flex-start;
               margin-top: 25px;
             }
 
@@ -264,27 +278,27 @@ export class ExpoPrintAdapter implements IPrint<null> {
             }
 
             .total {
-              border-top: 2px solid #222;
+              border-top: 1px solid #222;
               margin-top: 8px;
               padding-top: 10px;
             }
 
             .total td {
-              font-size: 18px;
+              font-size: 15px;
               font-weight: bold;
             }
 
             .payment {
               margin-top: 30px;
-              padding: 15px;
-              background: #f8f8f8;
-              border: 1px solid #ddd;
+              padding: 10px 15px;
+              background: #254f428f;
+              border: 1px solid #2e2e2e;
             }
 
             .payment-title {
               font-size: 13px;
               font-weight: bold;
-              margin-bottom: 10px;
+              margin-bottom: 5px;
             }
 
             .payment table {
@@ -301,7 +315,7 @@ export class ExpoPrintAdapter implements IPrint<null> {
             }
 
             .footer {
-              margin-top: 60px;
+              margin-top: 40px;
               padding-top: 15px;
               border-top: 1px solid #ddd;
               text-align: center;
@@ -327,198 +341,131 @@ export class ExpoPrintAdapter implements IPrint<null> {
 
         <body>
           <div class="document">
-
             <div class="header">
-
               <div class="company">
-
-                <div class="company-name">
-                  MINHA LOJA
-                </div>
+                <div class="company-name">${enterprise.nome}</div>
 
                 <div class="company-info">
-                  NIF: 000000000<br />
-                  Luanda - Angola<br />
-                  Telefone: +244 000 000 000
+                  NIF: ${enterprise.nif}<br />
+                  ${enterprise.endereco}<br />
+                  Telefone: ${enterprise.telefone}
                 </div>
-
               </div>
 
               <div class="invoice">
-
-                <div class="invoice-title">
-                  FATURA
-                </div>
+                <div class="invoice-title">FATURA DIGITAL</div>
 
                 <div class="invoice-info">
                   Venda Nº ${data.saleId}<br />
                   Data: ${this.escapeHtml(data.date)}
                 </div>
-
               </div>
+            </div>
 
+            <div class="sub-header">
+              <p>
+                Esta fatura foi gerada automaticamente pelo
+                <strong>Kamba App</strong>
+              </p>
             </div>
 
             <div class="sale-info">
-
               <table>
                 <tr>
-                  <td class="label">
-                    Cliente
-                  </td>
+                  <td class="label">Cliente</td>
 
-                  <td>
-                    Cliente Final
-                  </td>
+                  <td>Cliente Final</td>
 
-                  <td class="label">
-                    Forma de pagamento
-                  </td>
+                  <td class="label">Forma de pagamento</td>
 
-                  <td>
-                    ${this.escapeHtml(data.paymentMethod)}
-                  </td>
+                  <td>${this.escapeHtml(data.paymentMethod)}</td>
                 </tr>
               </table>
-
             </div>
 
             <table class="items">
-
               <thead>
                 <tr>
-                  <th class="product">
-                    Produto
-                  </th>
+                  <th class="product">Produto</th>
 
-                  <th class="quantity">
-                    Qtd.
-                  </th>
+                  <th class="quantity">Qtd.</th>
 
-                  <th class="unit-price">
-                    Preço Unit.
-                  </th>
+                  <th class="unit-price">Preço Unit.</th>
 
-                  <th class="subtotal">
-                    Subtotal
-                  </th>
+                  <th class="subtotal">Subtotal</th>
                 </tr>
               </thead>
 
               <tbody>
                 ${itemsHtml}
               </tbody>
-
             </table>
 
             <div class="totals-container">
-
               <div class="totals">
-
                 <table>
-
                   <tr>
-                    <td class="label">
-                      Subtotal
-                    </td>
+                    <td class="label">Subtotal</td>
 
-                    <td class="value">
-                      ${this.formatMoney(subtotal)}
-                    </td>
+                    <td class="value">${this.formatMoney(subtotal)}</td>
                   </tr>
 
                   ${
                     discount > 0
                       ? `
-                        <tr>
-                          <td class="label">
-                            Desconto
-                          </td>
+                  <tr>
+                    <td class="label">Desconto</td>
 
-                          <td class="value">
-                            -${this.formatMoney(discount)}
-                          </td>
-                        </tr>
-                      `
+                    <td class="value">-${this.formatMoney(discount)}</td>
+                  </tr>
+                  `
                       : ""
                   }
 
                   <tr class="total">
+                    <td class="label">TOTAL</td>
 
-                    <td class="label">
-                      TOTAL
-                    </td>
-
-                    <td class="value">
-                      ${this.formatMoney(data.total)}
-                    </td>
-
+                    <td class="value">${this.formatMoney(data.total)}</td>
                   </tr>
-
                 </table>
-
               </div>
-
             </div>
 
             <div class="payment">
-
-              <div class="payment-title">
-                Informação de pagamento
-              </div>
+              <div class="payment-title">Informação de pagamento</div>
 
               <table>
-
                 <tr>
-                  <td>
-                    Forma de pagamento
-                  </td>
+                  <td>Forma de pagamento</td>
 
-                  <td class="value">
-                    ${this.escapeHtml(data.paymentMethod)}
-                  </td>
+                  <td class="value">${this.escapeHtml(data.paymentMethod)}</td>
                 </tr>
 
                 <tr>
-                  <td>
-                    Valor pago
-                  </td>
+                  <td>Valor pago</td>
 
-                  <td class="value">
-                    ${this.formatMoney(data.paidAmount)}
-                  </td>
+                  <td class="value">${this.formatMoney(data.paidAmount)}</td>
                 </tr>
 
                 <tr>
-                  <td>
-                    Troco
-                  </td>
+                  <td>Troco</td>
 
-                  <td class="value">
-                    ${this.formatMoney(data.change)}
-                  </td>
+                  <td class="value">${this.formatMoney(data.change)}</td>
                 </tr>
-
               </table>
-
             </div>
 
             <div class="footer">
+              <div class="thanks">Obrigado pela preferência!</div>
 
-              <div class="thanks">
-                Obrigado pela preferência!
-              </div>
-
-              <div>
-                Volte sempre.
-              </div>
-
+              <div>Volte sempre.</div>
             </div>
-
           </div>
         </body>
-
       </html>
+
+              
+              
     `;
   }
 

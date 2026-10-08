@@ -1,14 +1,23 @@
-import { GmailAdapter } from "@/features/email/repositories/adapters/GmailAdapter";
+import EmailAdapterTeste from "@/features/email/repositories/adapters/emailAdapter.test";
 import EmailService from "@/features/email/repositories/services/email.service";
+import EnterpriseRepository from "@/features/enterprise/repositories/enterpriseRepository";
 import { ExpoPrintAdapter } from "@/features/print/repositories/adpters/expo-print-adapter";
 import { DadosFatura } from "@/features/print/types";
-import { GeneralHeader } from "@/shared/components/general_header";
 import { Input } from "@/shared/components/input";
 import blobToBase64 from "@/shared/helpers/blobtoBase64";
 import isValidEmail from "@/shared/helpers/validEmail";
+import colors from "@/theme/colos";
 import { Feather } from "@expo/vector-icons";
+import { useSQLiteContext } from "expo-sqlite";
 import { useState } from "react";
-import { Alert, Modal, Pressable, Text, View } from "react-native";
+import {
+  Alert,
+  Modal,
+  Pressable,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Props {
@@ -18,12 +27,15 @@ interface Props {
 }
 
 const expoprint = new ExpoPrintAdapter();
-const emailservice = new EmailService(new GmailAdapter());
+const emailservice = new EmailService(new EmailAdapterTeste());
 
 export const SendEmailModal = ({ visible, onClose, faturaDada }: Props) => {
   const [email, setEmail] = useState("");
   const [sending, setSending] = useState(false);
   const now = new Date().toLocaleDateString();
+
+  const db = useSQLiteContext();
+  const enteproiseRepository = new EnterpriseRepository(db);
 
   const handleClose = () => {
     if (sending) return;
@@ -49,8 +61,11 @@ export const SendEmailModal = ({ visible, onClose, faturaDada }: Props) => {
 
     try {
       setSending(true);
-
-      const uri = await expoprint.printToFile(faturaDada);
+      const company = await enteproiseRepository.getById();
+      if (!company) {
+        return;
+      }
+      const uri = await expoprint.printToFile(faturaDada, company);
 
       const response = await fetch(uri);
       const blob = await response.blob();
@@ -88,14 +103,19 @@ Este email foi enviado automaticamente pelo Kamba App Business.`,
   return (
     <Modal
       visible={visible}
-      animationType="slide"
+      animationType="fade"
       presentationStyle="fullScreen"
       onRequestClose={handleClose}
     >
-      <SafeAreaView className="flex-1">
-        <GeneralHeader>
-          <Text className="text-2xl font-bold">Partilha por email</Text>
-        </GeneralHeader>
+      <SafeAreaView className="flex-1 bg-background">
+        <View className="w-full bg-primary p-4 gap-2 flex-row items-center">
+          <TouchableOpacity onPress={handleClose}>
+            <Feather name="chevron-left" size={30} color={colors.secondary} />
+          </TouchableOpacity>
+          <Text className="text-2xl font-bold text-white">
+            Partilha por email
+          </Text>
+        </View>
 
         <View className="px-4 mt-4 gap-4">
           <View>

@@ -37,7 +37,12 @@ export const NavigationCard = ({
         </Text>
       </View>
 
-      <Feather name="chevron-right" size={18} color={colors.border} />
+      <Feather
+        name="chevron-right"
+        className="mr-2"
+        size={18}
+        color={colors.border}
+      />
     </View>
   );
 

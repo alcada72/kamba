@@ -88,12 +88,12 @@ export function SearchProdutsModal({
   return (
     <Modal
       visible={visible}
-      animationType="slide"
+      animationType="fade"
       presentationStyle="fullScreen"
       onRequestClose={handleClose}
     >
       <SafeAreaView className="flex-col flex-1 bg-primary">
-        <View className="flex-row pr-4 mb-4 gap-2 items-center">
+        <View className="flex-row pr-4 my-4 gap-2 items-center">
           <TouchableOpacity
             onPress={handleClose}
             className=" h-10 items-center justify-center rounded-full"
