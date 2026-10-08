@@ -1,5 +1,7 @@
+import { file_name } from "@/features/backup/const/file_name";
+
 export async function findBackup(accessToken: string) {
-  const query = "name = 'kamba-backup.json' and trashed = false";
+  const query = `name = '${file_name}.json' and trashed = false`;
 
   const params = new URLSearchParams({
     q: query,

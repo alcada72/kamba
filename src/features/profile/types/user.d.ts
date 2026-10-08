@@ -1,7 +1,7 @@
 export interface User {
   id: string;
   nome: string;
-  senha: string;
+  senha: string | null;
   telefone?: string;
   email?: string;
   photo?: string;
@@ -10,7 +10,7 @@ export interface User {
 export interface UpadateUserDTO {
   id?: string;
   nome?: string;
-  senha?: string;
+  senha?: string | null;
   telefone?: string;
   email?: string;
   photo?: string;

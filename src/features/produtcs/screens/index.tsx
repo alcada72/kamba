@@ -13,7 +13,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useLanguageStore } from "@/store/i18n.store";
 import { useSQLiteContext } from "expo-sqlite";
-import { StatusBar } from "expo-status-bar";
 
 import { EmptyState } from "../components/EmptyState";
 import { Header } from "../components/header";
@@ -136,8 +135,6 @@ export default function ProductsScreen() {
   if (error && !refreshing) {
     return (
       <SafeAreaView className="flex-1 bg-background">
-        <StatusBar style="light" />
-
         <Header
           lang={lang}
           productsCount={products.length}
@@ -173,8 +170,6 @@ export default function ProductsScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      <StatusBar style="dark" />
-
       <Header
         lang={lang}
         productsCount={products.length}

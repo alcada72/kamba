@@ -1,17 +1,19 @@
 import { useLanguageStore } from "@/store/i18n.store";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useSQLiteContext } from "expo-sqlite";
-import React, { useState } from "react";
-import { Alert, Pressable, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Alert, Pressable, Text, TouchableOpacity, View } from "react-native";
 
 import { FaturaRepository } from "@/features/faturas/repository/faturaRepository";
+import { DadosFatura } from "@/features/print/types";
 import { ProductRepository } from "@/features/produtcs/repositories/productRepository";
+import { Product } from "@/features/produtcs/types/product";
 import colors from "@/theme/colos";
 import { Feather } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { ListProdutsCart } from "../components/list-produts";
-import { NopermissionCamera } from "../components/noPermissionCamera";
+import { SearchProdutsModal } from "../components/searchProdutsModal";
 import { TotalCard } from "../components/total-card";
-import { ReceiptService } from "../repositories/receiptService";
 import { SaleRepository } from "../repositories/saleRepository";
 import { CartProduct } from "../types/sold";
 
@@ -24,23 +26,21 @@ export default function SoldScreen() {
   const saleRepository = new SaleRepository(db);
   const faturaRepository = new FaturaRepository(db);
 
-  const [permission] = useCameraPermissions();
+  const [permission, requestPermission] = useCameraPermissions();
 
   const [products, setProducts] = useState<CartProduct[]>([]);
+  const [query, setQuery] = useState("");
 
   const [scanning, setScanning] = useState(true);
 
   const [finishingSale, setFinishingSale] = useState(false);
   const [torch, setTorch] = useState(false);
-
+  const [isSarching, setisSarching] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const total = products.reduce(
     (sum, product) => sum + product.price * product.quantity,
     0,
   );
-
-  // ==========================================
-  // SCANNER
-  // ==========================================
 
   const handleBarcodeScanned = async ({
     data,
@@ -57,10 +57,6 @@ export default function SoldScreen() {
 
     try {
       const product = await productRepository.findByBarcode(data);
-
-      // ========================================
-      // PRODUTO NÃO ENCONTRADO
-      // ========================================
 
       if (!product) {
         Alert.alert(
@@ -85,85 +81,7 @@ export default function SoldScreen() {
         return;
       }
 
-      // ========================================
-      // PRODUTO INATIVO
-      // ========================================
-
-      if (product.ativo !== 1) {
-        Alert.alert(
-          lang === "pt" ? "Produto indisponível" : "Product unavailable",
-
-          lang === "pt"
-            ? `${product.nome} está desativado.`
-            : `${product.nome} is inactive.`,
-
-          [
-            {
-              text: "OK",
-              onPress: () => {
-                setTimeout(() => {
-                  setScanning(true);
-                }, 500);
-              },
-            },
-          ],
-        );
-
-        return;
-      }
-
-      if (product.estoque <= 0) {
-        Alert.alert(
-          lang === "pt" ? "Sem estoque" : "Out of stock",
-
-          lang === "pt"
-            ? `${product.nome} não possui estoque disponível.`
-            : `${product.nome} is out of stock.`,
-
-          [
-            {
-              text: "OK",
-              onPress: () => {
-                setTimeout(() => {
-                  setScanning(true);
-                }, 500);
-              },
-            },
-          ],
-        );
-
-        return;
-      }
-
-      setProducts((current) => {
-        const existing = current.find((item) => item.id === product.id);
-
-        if (existing) {
-          if (existing.quantity >= product.estoque) {
-            return current;
-          }
-
-          return current.map((item) =>
-            item.id === product.id
-              ? {
-                  ...item,
-                  quantity: item.quantity + 1,
-                }
-              : item,
-          );
-        }
-
-        return [
-          ...current,
-          {
-            id: product.id,
-            barcode: product.codigo_barras,
-            name: product.nome,
-            price: product.preco,
-            quantity: 1,
-          },
-        ];
-      });
+      handleSelectProduct(product);
 
       Alert.alert(
         lang === "pt" ? "Produto adicionado" : "Product added",
@@ -205,8 +123,98 @@ export default function SoldScreen() {
     }
   };
 
+  useEffect(() => {
+    handleRequestPermtion();
+    return () => {
+      setTorch(false);
+    };
+  }, []);
+
+  const handleRequestPermtion = async () => {
+    if (!permission?.granted) {
+      await requestPermission();
+    }
+  };
+
   const removeProduct = (id: number) => {
     setProducts((current) => current.filter((product) => product.id !== id));
+  };
+
+  const handleSelectProduct = (product: Product) => {
+    if (product.ativo !== 1) {
+      Alert.alert(
+        lang === "pt" ? "Produto indisponível" : "Product unavailable",
+
+        lang === "pt"
+          ? `${product.nome} está desativado.`
+          : `${product.nome} is inactive.`,
+
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              setTimeout(() => {
+                setScanning(true);
+              }, 500);
+            },
+          },
+        ],
+      );
+
+      return;
+    }
+
+    if (product.estoque <= 0) {
+      Alert.alert(
+        lang === "pt" ? "Sem estoque" : "Out of stock",
+
+        lang === "pt"
+          ? `${product.nome} não possui estoque disponível.`
+          : `${product.nome} is out of stock.`,
+
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              setTimeout(() => {
+                setScanning(true);
+              }, 500);
+            },
+          },
+        ],
+      );
+
+      return;
+    }
+    setProducts((current) => {
+      const existing = current.find((item) => item.id === product.id);
+
+      if (existing) {
+        if (existing.quantity >= product.estoque) {
+          return current;
+        }
+
+        return current.map((item) =>
+          item.id === product.id
+            ? {
+                ...item,
+                quantity: item.quantity + 1,
+              }
+            : item,
+        );
+      }
+
+      return [
+        ...current,
+        {
+          id: product.id,
+          barcode: product.codigo_barras,
+          name: product.nome,
+          price: product.preco,
+          quantity: 1,
+        },
+      ];
+    });
   };
 
   const addQdt = async (id: number | string) => {
@@ -274,6 +282,10 @@ export default function SoldScreen() {
     setProducts([]);
   };
 
+  const clearSearch = () => {
+    setQuery("");
+  };
+
   const handleFinishSale = async () => {
     if (products.length === 0 || finishingSale) {
       return;
@@ -299,7 +311,7 @@ export default function SoldScreen() {
         },
       });
 
-      const sale = {
+      const sale: DadosFatura = {
         saleId: result.saleId,
         date: new Date().toLocaleString("pt-AO"),
 
@@ -312,38 +324,26 @@ export default function SoldScreen() {
 
         total,
 
-        paymentMethod: "Dinheiro",
+        paymentMethod: "dinheiro",
         paidAmount: total,
         change: 0,
       };
 
-      await faturaRepository.create({
+      const fId = await faturaRepository.create({
         venda_id: sale.saleId,
         numero: `00${sale.saleId}`,
-        fatura_json: JSON.stringify(sale),
+        fatura_json: sale,
       });
 
-      await ReceiptService.print(sale, {
-        width: "80mm",
+      setProducts([]);
+      setScanning(true);
+
+      router.replace({
+        pathname: "/(private)/sold/finish",
+        params: {
+          id: String(fId),
+        },
       });
-
-      Alert.alert(
-        lang === "pt" ? "Venda concluída" : "Sale completed",
-
-        lang === "pt"
-          ? `Venda #${result.saleId}\nTotal: ${result.total.toFixed(2)} Kz`
-          : `Sale #${result.saleId}\nTotal: ${result.total.toFixed(2)} Kz`,
-
-        [
-          {
-            text: "OK",
-            onPress: () => {
-              setProducts([]);
-              setScanning(true);
-            },
-          },
-        ],
-      );
     } catch (error) {
       console.error("Erro ao finalizar venda:", error);
 
@@ -374,7 +374,7 @@ export default function SoldScreen() {
 
   if (!permission) {
     return (
-      <View className="flex-1 items-center justify-center bg-background">
+      <View className="flex-1 items-center justify-center bg-primary">
         <Text className="text-textSecondary">
           {lang === "pt"
             ? "A verificar permissões..."
@@ -384,50 +384,89 @@ export default function SoldScreen() {
     );
   }
 
-  if (!permission.granted) {
+  /*   if (!permission.granted) {
     return <NopermissionCamera />;
-  }
+  } */
 
   return (
     <View className="flex-1 bg-background">
-      <View className="overflow-hidden rounded-b-3xl bg-primary">
-        <View className="h-56">
-          <CameraView
-            style={{ flex: 1 }}
-            enableTorch={torch}
-            facing="back"
-            barcodeScannerSettings={{
-              barcodeTypes: [
-                "ean13",
-                "ean8",
-                "upc_a",
-                "upc_e",
-                "code128",
-                "code39",
-              ],
-            }}
-            onBarcodeScanned={scanning ? handleBarcodeScanned : undefined}
+      <View
+        style={{ display: isSarching ? "none" : "flex" }}
+
+        className="flex-row items-center justify-between w-full px-6 absolute top-2 left-0 z-10"
+      >
+        <TouchableOpacity
+          className="p-3 bg-primary rounded-full items-center"
+          onPress={() => setTorch(!torch)}
+        >
+          <Feather
+            name={torch ? "sun" : "zap"}
+            size={22}
+            color={torch ? colors.secondary : colors.white}
           />
+        </TouchableOpacity>
+        <TouchableOpacity
+          className="p-3 bg-primary rounded-full items-center"
 
-          <View className="absolute inset-0 items-center justify-center gap-2">
-            <Pressable onPress={() => setTorch(!torch)}>
-              <Feather
-                name={torch ? "sun" : "zap"}
-                size={22}
-                color={torch ? colors.secondary : colors.white}
-              />
-            </Pressable>
-            <View
-              style={{
-                borderColor: torch ? colors.secondary : colors.white,
-              }}
-
-              className="h-40 w-72 rounded-2xl border-2 "
+          onPress={() => setisSarching(!isSarching)}
+        >
+          <Feather name={"search"} size={22} color={colors.white} />
+        </TouchableOpacity>
+      </View>
+      <View className="overflow-hidden rounded-b-3xl bg-primary">
+        {isSarching ? (
+          <View className="flex-row px-4 pb-4 gap-2">
+            <Pressable
+              onPress={() => setShowModal(true)}
+              className="flex-row flex-1 items-center h-14  rounded-2xl bg-white px-4"
             >
-              <View className="absolute left-4 right-4 top-1/2 h-0.5 bg-secondary" />
+              <Feather name="search" size={21} color={colors.border} />
+
+              <Text className="ml-3 flex-1 text-base  text-gray-900">
+                Pesquisar
+              </Text>
+            </Pressable>
+
+            <TouchableOpacity
+              className="p-3 bg-secondary rounded-2xl items-center"
+              onPress={() => setisSarching(!isSarching)}
+            >
+              <Feather name={"camera"} size={22} color={colors.borderDark} />
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View className="h-56">
+            <CameraView
+              style={{ flex: 1 }}
+              enableTorch={torch}
+              facing="back"
+
+              barcodeScannerSettings={{
+                barcodeTypes: [
+                  "ean13",
+                  "ean8",
+                  "upc_a",
+                  "upc_e",
+                  "code128",
+                  "code39",
+                ],
+              }}
+              onBarcodeScanned={scanning ? handleBarcodeScanned : undefined}
+            />
+
+            <View className="absolute inset-0 items-center justify-center gap-2">
+              <View
+                style={{
+                  borderColor: torch ? colors.secondary : colors.white,
+                }}
+
+                className="h-40 w-72 rounded-2xl border-2 "
+              >
+                <View className="absolute left-4 right-4 top-1/2 h-0.5 bg-secondary" />
+              </View>
             </View>
           </View>
-        </View>
+        )}
       </View>
 
       {/* PRODUTOS */}
@@ -445,6 +484,16 @@ export default function SoldScreen() {
         productsLength={products.length}
         finishingSale={finishingSale}
         total={total}
+      />
+
+      <SearchProdutsModal
+        visible={showModal}
+        onClose={() => setShowModal(false)}
+        selectProduct={(product) => handleSelectProduct(product)}
+        setisSarching={() => {
+          setShowModal(false);
+          setisSarching(false);
+        }}
       />
     </View>
   );

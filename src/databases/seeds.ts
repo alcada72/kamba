@@ -11,13 +11,11 @@ export async function seedDatabase(db: SQLiteDatabase) {
     INSERT OR IGNORE INTO usuarios (
       id,
       nome,
-      senha,
       telefone
     )
     VALUES (
       1,
       'Administrador',
-      '123456',
       '+244900000000'
     );
 

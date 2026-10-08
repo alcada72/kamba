@@ -12,7 +12,7 @@ export async function migrateV1(db: SQLiteDatabase) {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       external_id TEXT,
       nome TEXT NOT NULL,
-      senha TEXT NOT NULL,
+      senha TEXT,
       email TEXT,
       photo TEXT,
       telefone TEXT

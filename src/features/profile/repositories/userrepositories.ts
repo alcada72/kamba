@@ -41,7 +41,7 @@ export class UserRepository {
 
   async getAllUser(): Promise<User[] | null> {
     const result = await this.db.getAllAsync<User>(`
-        SELECT * FROM produtos         
+        SELECT * FROM usuarios         
         `);
     return result;
   }
@@ -68,7 +68,7 @@ export class UserRepository {
 
     values.push(id);
 
-    await this.db.runAsync(
+    return await this.db.runAsync(
       `
       UPDATE usuarios
       SET ${fields.join(", ")}

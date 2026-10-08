@@ -2,9 +2,8 @@ import { SQLiteDatabase } from "expo-sqlite";
 import { CreateProductDTO, Product, UpdateProductDTO } from "../types/product";
 
 export class ProductRepository {
-  constructor(private readonly db: SQLiteDatabase) { }
+  constructor(private readonly db: SQLiteDatabase) {}
 
-  // CREATE
   async create(data: CreateProductDTO): Promise<number> {
     if (!data.nome.trim()) {
       throw new Error("O nome do produto é obrigatório.");
@@ -55,7 +54,6 @@ export class ProductRepository {
     return result.lastInsertRowId;
   }
 
-  // READ - todos
   async findAll(): Promise<Product[]> {
     return await this.db.getAllAsync<Product>(
       `
@@ -67,7 +65,6 @@ export class ProductRepository {
     );
   }
 
-  // READ - por ID
   async findById(id: number): Promise<Product | null> {
     const product = await this.db.getFirstAsync<Product>(
       `
@@ -82,7 +79,6 @@ export class ProductRepository {
     return product ?? null;
   }
 
-  // READ - por código de barras
   async findByBarcode(codigoBarras: string): Promise<Product | null> {
     const product = await this.db.getFirstAsync<Product>(
       `
@@ -97,7 +93,6 @@ export class ProductRepository {
     return product ?? null;
   }
 
-  // UPDATE
   async update(id: number, data: UpdateProductDTO): Promise<void> {
     const fields: string[] = [];
     const values: unknown[] = [];
@@ -173,7 +168,6 @@ export class ProductRepository {
     );
   }
 
-  // DELETE lógico
   async delete(id: number): Promise<void> {
     await this.db.runAsync(
       `
@@ -185,7 +179,6 @@ export class ProductRepository {
     );
   }
 
-  // Reativar produto
   async restore(id: number): Promise<void> {
     await this.db.runAsync(
       `
@@ -197,7 +190,6 @@ export class ProductRepository {
     );
   }
 
-  // Produtos com estoque baixo
   async findLowStock(): Promise<Product[]> {
     return await this.db.getAllAsync<Product>(
       `
@@ -210,9 +202,8 @@ export class ProductRepository {
     );
   }
 
-  // Pesquisa
-  async search(search: string): Promise<Product[]> {
-    const value = `%${search}%`;
+  async search(query: string): Promise<Product[]> {
+    const value = `%${query}%`;
 
     return await this.db.getAllAsync<Product>(
       `

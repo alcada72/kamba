@@ -1,4 +1,9 @@
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import {
+  GoogleSignin,
+  isSuccessResponse,
+  statusCodes,
+} from "@react-native-google-signin/google-signin";
+
 import {
   AuthResult,
   AuthUser,
@@ -24,25 +29,41 @@ export class GoogleAuthAdapter implements ExternalAuthProvider {
   }
 
   async signIn(): Promise<AuthResult | null> {
-    await GoogleSignin.hasPlayServices();
+    try {
+      await this.hasPlayService();
+      const response = await GoogleSignin.signIn();
 
-    const response = await GoogleSignin.signIn();
+      if (!isSuccessResponse(response)) {
+        return null;
+      }
 
-    const user = response.data?.user;
-    if (!user) {
-      return null;
+      const user = response.data.user;
+
+      return {
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name ?? undefined,
+          photo: user.photo ?? undefined,
+          provider: "google",
+        },
+        idToken: response.data.idToken ?? undefined,
+      };
+    } catch (error: any) {
+      console.log("Erro ao fazer login com Google", error);
+
+      if (error?.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        throw new Error("Google Play Services não disponível");
+      }
+
+      throw new Error("Erro ao fazer login com Google");
     }
+  }
 
-    return {
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name ?? undefined,
-        photo: user.photo ?? undefined,
-        provider: "google",
-      },
-      idToken: response.data?.idToken ?? undefined,
-    };
+  async getAccessToken(): Promise<string> {
+    const { accessToken } = await GoogleSignin.getTokens();
+
+    return accessToken;
   }
 
   async signOut(): Promise<void> {
@@ -51,5 +72,9 @@ export class GoogleAuthAdapter implements ExternalAuthProvider {
 
   async isSignedIn(): Promise<boolean> {
     return await GoogleSignin.hasPreviousSignIn();
+  }
+
+  async hasPlayService() {
+    return await GoogleSignin.hasPlayServices();
   }
 }

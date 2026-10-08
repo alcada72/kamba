@@ -1,3 +1,5 @@
+import { Fatura } from "@/features/faturas/types/indx";
+
 export interface Produto {
   id: number;
   nome: string;
@@ -10,12 +12,6 @@ export interface ItemVenda {
   preco_unitario: number;
   subtotal: number;
   produto: Produto;
-}
-
-export interface Fatura {
-  id: number;
-  numero: string | null;
-  fatura_json: string;
 }
 
 export interface Venda {

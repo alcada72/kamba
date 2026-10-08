@@ -12,4 +12,8 @@ export class SQLiteAuthAdapters implements IAuth {
 
     return response.senha === senha;
   }
+
+  logout(): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
 }

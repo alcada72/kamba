@@ -56,7 +56,7 @@ export default function HomeScreen() {
       const [summary, sales, user] = await Promise.all([
         dashboardRepository.getSummary(),
         dashboardRepository.getRecentSales(15),
-        userRepository.getFrist(),
+        userRepository.getFrist(1),
       ]);
 
       setTodaySalesTotal(summary.todaySalesTotal);
@@ -64,6 +64,7 @@ export default function HomeScreen() {
       setTodaySalesCount(summary.todaySalesCount);
 
       setTotalProducts(summary.totalProducts);
+
       setUserData(user);
       setRecentSales(sales);
     } catch (error) {
@@ -80,6 +81,7 @@ export default function HomeScreen() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerClassName="px-5 pb-10"
+        overScrollMode="never"
       >
         <View className="mt-8">
           <Text className="mb-4 text-xl font-bold text-text">
@@ -108,7 +110,7 @@ export default function HomeScreen() {
             <FastAcessItem
               icon="bar-chart-2"
               label={t("reports", lang)}
-              onPress={() => console.log("Relatórios")}
+              onPress={() => router.navigate("/(private)/reports")}
             />
           </View>
         </View>

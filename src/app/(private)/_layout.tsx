@@ -6,11 +6,18 @@ import { AppState, AppStateStatus } from "react-native";
 
 const INACTIVITY_TIMEOUT = 60 * 1000;
 
-export default function RootLayout() {
-  const { isLogged, isTrunckedApp, setTruncked, setInactiveAt, inactiveAt } =
-    useAuthState();
+export default function PublicLayout() {
+  const {
+    isLogged,
+    isTrunckedApp,
+    setTruncked,
+    setInactiveAt,
+    inactiveAt,
+    activeTrunckedApp,
+  } = useAuthState();
 
   const appStateRef = useRef<AppStateStatus>(AppState.currentState);
+
   const inactiveAtRef = useRef<number | null>(inactiveAt);
 
   useEffect(() => {
@@ -18,7 +25,7 @@ export default function RootLayout() {
   }, [inactiveAt]);
 
   useEffect(() => {
-    if (!isLogged || isTrunckedApp) {
+    if (!isLogged || isTrunckedApp || !activeTrunckedApp) {
       return;
     }
 
@@ -31,16 +38,16 @@ export default function RootLayout() {
 
       if (wasActive && isInactive) {
         const timestamp = Date.now();
-
         inactiveAtRef.current = timestamp;
+
         setInactiveAt(timestamp);
       }
 
       if (nextState === "active") {
-        const inactiveAt = inactiveAtRef.current;
+        const inactiveTimestamp = inactiveAtRef.current;
 
-        if (inactiveAt !== null) {
-          const elapsed = Date.now() - inactiveAt;
+        if (inactiveTimestamp !== null) {
+          const elapsed = Date.now() - inactiveTimestamp;
 
           if (elapsed >= INACTIVITY_TIMEOUT) {
             setTruncked(true);
@@ -48,9 +55,9 @@ export default function RootLayout() {
         }
 
         inactiveAtRef.current = null;
+
         setInactiveAt(null);
       }
-
       appStateRef.current = nextState;
     };
 
@@ -62,12 +69,13 @@ export default function RootLayout() {
     return () => {
       subscription.remove();
     };
-  }, [isLogged, isTrunckedApp, setInactiveAt, setTruncked]);
+  }, [activeTrunckedApp, isLogged, isTrunckedApp, setInactiveAt, setTruncked]);
 
   return (
     <Stack
       screenOptions={{
         headerShown: false,
+
         contentStyle: {
           backgroundColor: colors.background,
           flex: 1,

@@ -41,3 +41,10 @@ app-example
 # generated native folders
 /ios
 /android
+
+# Google Config
+google-services.json
+
+# Markdown Exemple
+/reuniao.md
+test.*

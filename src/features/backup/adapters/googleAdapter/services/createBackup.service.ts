@@ -1,14 +1,16 @@
+import { file_name } from "@/features/backup/const/file_name";
+
 export async function createBackup(
   accessToken: string,
   data: string,
 ): Promise<void> {
   const metadata = {
-    name: "kamba-backup.json",
+    name: `${file_name}.json`,
     parents: ["appDataFolder"],
     mimeType: "application/json",
   };
 
-  const boundary = "kamba_backup_boundary";
+  const boundary = `${file_name}_boundary`;
 
   const body =
     `--${boundary}\r\n` +

@@ -27,17 +27,22 @@ export const NavigationCard = ({
     <View className="flex-row items-center justify-between py-4">
       <View className="flex-1 flex-row items-center">
         {icon && (
-          <View className="mr-4 h-10 w-10 items-center justify-center rounded-xl bg-green-50">
+          <View className="mx-4 h-10 w-10 items-center justify-center rounded-xl bg-green-50">
             <Feather name={icon} size={25} color={colorIcon || colors.text} />
           </View>
         )}
 
-        <Text className="text-base font-semibold text-text">
+        <Text className="text-lg font-semibold text-text">
           {t(label, lang)}
         </Text>
       </View>
 
-      <Feather name="chevron-right" size={18} color={colors.border} />
+      <Feather
+        name="chevron-right"
+        className="mr-2"
+        size={18}
+        color={colors.border}
+      />
     </View>
   );
 
@@ -45,7 +50,7 @@ export const NavigationCard = ({
     return (
       <>
         {content}
-        {showBorder && <View className="h-px w-full bg-border" />}
+        {showBorder && <View className="h-[0.8px] w-full bg-border" />}
       </>
     );
   }
@@ -56,7 +61,7 @@ export const NavigationCard = ({
         <Pressable className="active:opacity-50">{content}</Pressable>
       </Link>
 
-      {showBorder && <View className="h-px w-full bg-border" />}
+      {showBorder && <View className="h-[0.8px] w-full bg-border" />}
     </>
   );
 };

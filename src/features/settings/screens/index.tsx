@@ -1,16 +1,36 @@
+import { UserRepository } from "@/features/profile/repositories/userRepositories";
+import { User } from "@/features/profile/types/user";
 import { GeneralProfileHeader } from "@/shared/components/general_profile_header";
 import { t } from "@/shared/i18n";
 import { useLanguageStore } from "@/store/i18n.store";
 import colors from "@/theme/colos";
 import Constants from "expo-constants";
-import React from "react";
+import { useSQLiteContext } from "expo-sqlite";
+import React, { useEffect, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { NavigationCard } from "../components/navigation-card";
 
 export default function SettingsScreen() {
   const { lang, switchLanguage } = useLanguageStore();
+  const [user, setuser] = useState<User>();
+  const db = useSQLiteContext();
 
   const isPortuguese = lang === "pt";
+
+  useEffect(() => {
+    loadDataUser();
+  }, []);
+
+  const loadDataUser = async () => {
+    try {
+      const userRepositories = new UserRepository(db);
+      const res = await userRepositories.getFrist(1);
+      if (!res) return;
+      setuser(res);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <ScrollView
@@ -18,9 +38,9 @@ export default function SettingsScreen() {
       contentContainerClassName="pb-10 bg-background"
       showsVerticalScrollIndicator={false}
     >
-      <GeneralProfileHeader />
+      <GeneralProfileHeader user={user} />
 
-      <View className="mb-6 mt-3 px-5">
+      <View className="my-6 mt-3 px-5">
         <Text className="mb-3 text-sm font-semibold uppercase tracking-wider text-textMuted">
           {t("general", lang)}
         </Text>
@@ -32,11 +52,11 @@ export default function SettingsScreen() {
           >
             <View className="flex-row items-center">
               <View className="mr-4 h-10 w-10 items-center justify-center rounded-xl bg-green-50">
-                <Text className="text-lg">{isPortuguese ? "🇵🇹" : "🇬🇧"}</Text>
+                <Text className="text-2xl">{isPortuguese ? "🇵🇹" : "🇬🇧"}</Text>
               </View>
 
               <View>
-                <Text className="text-base font-semibold text-text">
+                <Text className="text-lg font-semibold text-text">
                   {t("language", lang)}
                 </Text>
 
@@ -48,8 +68,6 @@ export default function SettingsScreen() {
 
             <Text className="text-xl text-textMuted">›</Text>
           </Pressable>
-
-          <View className="ml-4 h-px bg-border" />
         </View>
       </View>
 
@@ -60,9 +78,10 @@ export default function SettingsScreen() {
 
         <View className="overflow-hidden rounded-2xl border border-border bg-surface">
           <NavigationCard
-            icon="user"
-            label="profile"
-            link={"/(private)/profile"}
+            colorIcon={colors.success}
+            icon="briefcase"
+            label="enterprise"
+            link={"/(private)/profile/enterprise"}
           />
 
           <NavigationCard
@@ -72,15 +91,24 @@ export default function SettingsScreen() {
           />
 
           <NavigationCard
-            colorIcon={colors.secondary}
+            colorIcon={colors.blue}
             icon="upload-cloud"
-            label="notifications"
+            label="backup"
+            link={"/(private)/settings/backup"}
           />
 
           <NavigationCard
-            colorIcon={colors.secondary}
-            icon="lock"
+            colorIcon={colors.error}
+            icon="info"
             label="security"
+            link={"/(private)/settings/backup/restore"}
+          />
+
+          <NavigationCard
+            colorIcon={colors.error}
+            icon="git-pull-request"
+            label="security"
+            link={"/(private)/settings/security"}
             showBorder={false}
           />
         </View>
@@ -92,9 +120,13 @@ export default function SettingsScreen() {
         </Text>
 
         <View className="rounded-2xl border border-border bg-surface px-4">
-          <NavigationCard label="about" />
-          <NavigationCard label="terms" />
-          <NavigationCard label="privacy" showBorder={false} />
+          <NavigationCard label="about" link={"/(public)/about"} />
+          <NavigationCard label="terms" link={"/(public)/terms"} />
+          <NavigationCard
+            label="privacy"
+            link={"/(public)/privacy"}
+            showBorder={false}
+          />
         </View>
       </View>
 

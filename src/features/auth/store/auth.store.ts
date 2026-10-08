@@ -6,8 +6,10 @@ interface AuthState {
   isLogged: boolean;
   isTrunckedApp: boolean;
   inactiveAt: number | null;
+  activeTrunckedApp: boolean;
 
   setInactiveAt: (value: number | null) => void;
+  setActiveTrunckedApp: (value: boolean) => void;
   setLogged(value: boolean): void;
   setTruncked(value: boolean): void;
 }
@@ -31,6 +33,7 @@ export const useAuthState = create<AuthState>()(
     (set) => ({
       isLogged: false,
       isTrunckedApp: false,
+      activeTrunckedApp: false,
       inactiveAt: null,
 
       setLogged: (value: boolean) => set({ isLogged: value }),
@@ -38,6 +41,8 @@ export const useAuthState = create<AuthState>()(
       setTruncked: (value: boolean) => set({ isTrunckedApp: value }),
 
       setInactiveAt: (value: number | null) => set({ inactiveAt: value }),
+      setActiveTrunckedApp: (value: boolean) =>
+        set({ activeTrunckedApp: value }),
     }),
     {
       name: "auth-storage",
