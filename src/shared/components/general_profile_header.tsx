@@ -1,6 +1,6 @@
 import { useAuthState } from "@/features/auth/store/auth.store";
 import { useBackupStore } from "@/features/backup/store/backup.store";
-import { User } from "@/features/profile/types/user";
+import { User } from "@/features/user/types/user";
 import { t } from "@/shared/i18n";
 import { useLanguageStore } from "@/store/i18n.store";
 import colors from "@/theme/colos";

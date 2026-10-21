@@ -1,5 +1,5 @@
-import { User } from "@/features/profile/types/user";
 import { UserRepository } from "@/features/user/repositories/userrepositories";
+import { User } from "@/features/user/types/user";
 import { GeneralProfileHeader } from "@/shared/components/general_profile_header";
 import { t } from "@/shared/i18n";
 import { useLanguageStore } from "@/store/i18n.store";

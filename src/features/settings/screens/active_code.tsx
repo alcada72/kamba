@@ -1,6 +1,6 @@
 import { useAuthState } from "@/features/auth/store/auth.store";
-import { User } from "@/features/profile/types/user";
 import { UserRepository } from "@/features/user/repositories/userrepositories";
+import { User } from "@/features/user/types/user";
 import { GeneralHeader } from "@/shared/components/general_header";
 import { KeysBoardComponent, PIN_LENGTH } from "@/shared/components/keysBoards";
 import { t } from "@/shared/i18n";
