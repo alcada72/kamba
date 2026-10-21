@@ -1,4 +1,4 @@
-import EmailAdapterTeste from "@/features/email/repositories/adapters/emailAdapter.test";
+import { GmailAdapter } from "@/features/email/repositories/adapters/GmailAdapter";
 import EmailService from "@/features/email/repositories/services/email.service";
 import EnterpriseRepository from "@/features/enterprise/repositories/enterpriseRepository";
 import { ExpoPrintAdapter } from "@/features/print/repositories/adpters/expo-print-adapter";
@@ -27,7 +27,7 @@ interface Props {
 }
 
 const expoprint = new ExpoPrintAdapter();
-const emailservice = new EmailService(new EmailAdapterTeste());
+const emailservice = new EmailService(new GmailAdapter());
 
 export const SendEmailModal = ({ visible, onClose, faturaDada }: Props) => {
   const [email, setEmail] = useState("");
@@ -45,8 +45,10 @@ export const SendEmailModal = ({ visible, onClose, faturaDada }: Props) => {
   };
 
   const handleSendEmail = async () => {
-    if (!faturaDada) return;
-
+    if (!faturaDada) {
+      Alert.alert("Atenção", "Sem dados da factura.");
+      return;
+    }
     const recipientEmail = email.trim();
 
     if (!recipientEmail) {
@@ -59,8 +61,8 @@ export const SendEmailModal = ({ visible, onClose, faturaDada }: Props) => {
       return;
     }
 
+    setSending(true);
     try {
-      setSending(true);
       const company = await enteproiseRepository.getById();
       if (!company) {
         return;

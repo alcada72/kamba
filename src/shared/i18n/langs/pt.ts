@@ -78,14 +78,17 @@ const pt: i18nType = {
   // Backup
   backupSalesTitle: "Backup dos dados de vendas",
   backupSalesDescription:
-    "Faça backup das suas vendas e ficheiros multimédia para evitar a perda de dados.",
+    "Faça backup das suas vendas para evitar a perda de dados.",
 
   backupNow: "Fazer backup agora",
-  lastBackup: "Último backup: hoje, 03:42",
+  lastBackup: "Último backup: ",
 
   backupSettings: "Definições",
   automaticBackup: "Backup automático",
   automaticBackupDescription: "Fazer backup dos seus dados diariamente",
+  backupInProgress: "Backup em andamento...",
+  backupCompleted: "Backup concluído com sucesso.",
+  backupFailed: "Falha no backup. Por favor, tente novamente.",
 
   frequency: "Frequência",
   daily: "Diariamente",

@@ -4,7 +4,7 @@ import { TBackup } from "../types/backup";
 type BackupRow = Record<string, unknown>;
 
 export default class BackupRepositories {
-  constructor(private readonly db: SQLiteDatabase) {}
+  constructor(private readonly db: SQLiteDatabase) { }
 
   /**
    * ============================================================
@@ -63,8 +63,7 @@ export default class BackupRepositories {
       console.error("Erro ao criar backup do banco de dados:", error);
 
       throw new Error(
-        `Erro ao criar backup do banco de dados: ${
-          error instanceof Error ? error.message : String(error)
+        `Erro ao criar backup do banco de dados: ${error instanceof Error ? error.message : String(error)
         }`,
       );
     }
@@ -224,7 +223,6 @@ export default class BackupRepositories {
     }
 
     const tables = [
-      "usuarios",
       "categorias",
       "produtos",
       "faturas",

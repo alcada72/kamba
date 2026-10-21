@@ -13,10 +13,11 @@ import { useLanguageStore } from "@/store/i18n.store";
 import colors from "@/theme/colos";
 import { useLocalSearchParams } from "expo-router";
 import { ThermalPrinterDevice } from "react-native-thermal-pos-printer";
-import PrinterAdapterTeste from "../repositories/adpters/print-adtpter.test";
+import { ThermalPosPrinterAdapter } from "../repositories/adpters/thermalPosPrinterAdapter";
 import { PrinterService } from "../repositories/services/printer.service";
+import { DadosFatura } from "../types";
 
-const printerService = new PrinterService(new PrinterAdapterTeste());
+const printerService = new PrinterService(new ThermalPosPrinterAdapter());
 
 interface PrinterItem {
   device: ThermalPrinterDevice;
@@ -43,18 +44,18 @@ export default function PrintersScreen() {
 
       const devices = await printerService.findAllPrinters();
 
-      /*       const printerItems:PrinterItem[] = devices.map((device) => ({
+      const printerItems: PrinterItem[] = devices.map((device) => ({
         device,
-      })); */
+      }));
 
-      //  setPrinters(printerItems);
+      setPrinters(printerItems);
     } catch (error) {
       console.error("Erro ao procurar impressoras:", error);
 
       setPrinters([]);
 
       Alert.alert(
-        "Erro",
+        "Erro ao procurar impressoras",
         error instanceof Error
           ? error.message
           : t("Couldnotfindtheprinters", lang),
@@ -77,10 +78,10 @@ export default function PrintersScreen() {
 
     try {
       setPrinting(true);
-      /*       await printerService.print(
+      await printerService.print(
         JSON.parse(fatura_json) as DadosFatura,
         selectedPrinter.device,
-      ); */
+      );
 
       Alert.alert(t("success", lang), "Documento impresso com sucesso.");
     } catch (error) {

@@ -16,8 +16,8 @@ import {
 } from "@/features/home/repositories/dashboardRepository";
 import { useSQLiteContext } from "expo-sqlite";
 
-import { UserRepository } from "@/features/profile/repositories/userRepositories";
-import { User } from "@/features/profile/types/user";
+import { UserRepository } from "@/features/user/repositories/userrepositories";
+import { User } from "@/features/user/types/user";
 import formatCurrency from "@/shared/format-currecy";
 import { FastAcessItem } from "../components/falstAcess-item";
 import { HomeHeader } from "../components/header";

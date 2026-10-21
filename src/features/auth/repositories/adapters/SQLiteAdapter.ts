@@ -1,9 +1,10 @@
-import { UserRepository } from "@/features/profile/repositories/userRepositories";
+
+import { UserRepository } from "@/features/user/repositories/userrepositories";
 import { SQLiteDatabase } from "expo-sqlite";
 import { IAuth } from "../../types/login";
 
 export class SQLiteAuthAdapters implements IAuth {
-  constructor(private readonly db: SQLiteDatabase) {}
+  constructor(private readonly db: SQLiteDatabase) { }
 
   public async login(id: number | string, senha: string): Promise<boolean> {
     const userRepository = new UserRepository(this.db);

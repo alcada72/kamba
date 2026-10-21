@@ -1,9 +1,11 @@
 import { useAuthState } from "@/features/auth/store/auth.store";
+import { useBackupStore } from "@/features/backup/store/backup.store";
 import { User } from "@/features/profile/types/user";
 import { t } from "@/shared/i18n";
 import { useLanguageStore } from "@/store/i18n.store";
 import colors from "@/theme/colos";
 import { Feather, FontAwesome } from "@expo/vector-icons";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Image, Pressable, Text, TouchableOpacity, View } from "react-native";
@@ -14,10 +16,22 @@ interface Props {
 
 export const GeneralProfileHeader = ({ user }: Props) => {
   const lang = useLanguageStore((store) => store.lang);
+  const [isExiting, setisExiting] = useState(false);
   const [showOptions, setshowOptions] = useState(false);
   const { setLogged } = useAuthState();
+  const { setDownloadBackupIsCompleted } = useBackupStore();
+
   const exit = async () => {
-    setLogged(false);
+    setisExiting(true);
+    try {
+      await GoogleSignin.signOut();
+      setDownloadBackupIsCompleted(false);
+      setLogged(false);
+    } catch (error) {
+      console.log("Erro ao sair ", error);
+    } finally {
+      setisExiting(false);
+    }
   };
 
   return (
@@ -87,12 +101,22 @@ export const GeneralProfileHeader = ({ user }: Props) => {
             {user?.nome}
           </Text>
           {user?.email && (
-            <Text className="text-2xl text-center text-gold-400 font-bold">
+            <Text className="text-xl text-center text-gold-50 font-medium">
               {user?.email}
+            </Text>
+          )}
+          {user?.telefone && (
+            <Text className="text-xl text-center text-gold-50 font-medium">
+              {user?.telefone}
             </Text>
           )}
         </View>
       </View>
+      {isExiting && (
+        <View className="absolute w-full h-full bg-black/30 items-center justify-center">
+          <Text className="text-white text-lg font-semibold">Saindo...</Text>
+        </View>
+      )}
     </View>
   );
 };

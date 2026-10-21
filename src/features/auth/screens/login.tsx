@@ -1,4 +1,4 @@
-import { UserRepository } from "@/features/profile/repositories/userRepositories";
+import { UserRepository } from "@/features/user/repositories/userrepositories";
 import { assetsPath } from "@/shared/assets";
 import { LoandingModal } from "@/shared/components/loading-modal";
 import { t } from "@/shared/i18n";
@@ -9,7 +9,7 @@ import { Link } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useState } from "react";
 import { Image, Pressable, Text, TouchableOpacity, View } from "react-native";
-import { TesteAuthAdapter } from "../repositories/adapters/adpter.test";
+import { GoogleAuthAdapter } from "../repositories/adapters/GoogleAuthAdapter";
 import { AuthExternalService } from "../repositories/external.auth.service";
 import { useAuthState } from "../store/auth.store";
 
@@ -23,11 +23,11 @@ export default function LoginScreen() {
   const db = useSQLiteContext();
 
   const userRepository = new UserRepository(db);
-  const externalAuthService = new AuthExternalService(new TesteAuthAdapter());
+  const externalAuthService = new AuthExternalService(new GoogleAuthAdapter());
 
   const handleLogin = async () => {
     setisLoading(true);
-    setLogged(true);
+    //setLogged(true);
 
     try {
       const res = await externalAuthService.login();
@@ -43,9 +43,9 @@ export default function LoginScreen() {
         },
         1,
       );
-      console.log(creted);
+      console.log("Criaou", creted?.changes, creted?.lastInsertRowId);
 
-      if (creted?.lastInsertRowId) {
+      if (creted?.changes) {
         setLogged(true);
       }
     } catch (error) {

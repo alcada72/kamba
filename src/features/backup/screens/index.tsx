@@ -6,23 +6,45 @@ import { router } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
 
+import { useEffect, useState } from "react";
+import { GoogleDriveAdapter } from "../adapters/googleAdapter/googleDriveAdater";
 import BackupRepositories from "../repositories/backupRepositories";
+import { BackupService } from "../services/backup.service";
 
-//const backupService = new BackupService(new GoogleDriveAdapter());
+const backupService = new BackupService(new GoogleDriveAdapter());
 
 export default function BackupScreen() {
   const lang = useLanguageStore((state) => state.lang);
   const db = useSQLiteContext();
+  const [lastBeckupDate, setlastBeckupDate] = useState<Date | null>(null);
+  const [isBeckuping, setisBeckuping] = useState(false);
 
   const backupRepositories = new BackupRepositories(db);
 
-  const handleMakeBackup = async () => {
-    try {
-      const data = await backupRepositories.getBackupDatabase();
+  useEffect(() => {
+    loadLastBackupDate();
+  }, []);
 
-      // await backupService.backup("google_drive", data);
+  const loadLastBackupDate = async () => {
+    try {
+      const lastBackup = await backupService.getLastBackup("google_drive");
+      setlastBeckupDate(lastBackup);
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const handleMakeBackup = async () => {
+    setisBeckuping(true);
+    try {
+      const data = await backupRepositories.getBackupDatabase();
+      console.log("dados do backup ", data);
+
+      await backupService.backup("google_drive", data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setisBeckuping(false);
     }
   };
 
@@ -70,6 +92,7 @@ export default function BackupScreen() {
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={handleMakeBackup}
+            disabled={isBeckuping}
             className="flex-row items-center px-4 py-4"
           >
             <View className="mr-4 h-11 w-11 items-center justify-center rounded-full bg-primary/10">
@@ -82,7 +105,10 @@ export default function BackupScreen() {
               </Text>
 
               <Text className="mt-1 text-sm text-muted-foreground">
-                {t("lastBackup", lang)}
+                {t("lastBackup", lang)}{" "}
+                {lastBeckupDate
+                  ? lastBeckupDate.toLocaleString()
+                  : "Nenhum backup realizado"}
               </Text>
             </View>
 
@@ -143,28 +169,6 @@ export default function BackupScreen() {
           </TouchableOpacity>
 
           <View className="ml-[76px] border-t border-border" />
-
-          {/* Vídeos */}
-          <View className="flex-row items-center px-4 py-4">
-            <View className="flex-1">
-              <Text className="text-base text-foreground">
-                {t("includeVideos", lang)}
-              </Text>
-
-              <Text className="mt-1 text-sm leading-5 text-muted-foreground">
-                {t("includeVideosDescription", lang)}
-              </Text>
-            </View>
-
-            <Switch
-              value={false}
-              trackColor={{
-                false: "#D1D5DB",
-                true: "#86EFAC",
-              }}
-              thumbColor="#9CA3AF"
-            />
-          </View>
         </View>
 
         {/* Armazenamento */}
@@ -206,6 +210,16 @@ export default function BackupScreen() {
           </Text>
         </View>
       </ScrollView>
+      {isBeckuping && (
+        <View className="absolute inset-0 z-50 flex-1 items-center justify-center bg-black/50">
+          <View className="flex-row items-center rounded-xl bg-background px-4 py-3">
+            <Ionicons name="cloud-upload" size={22} color={colors.green700} />
+            <Text className="ml-2 text-lg font-medium text-foreground">
+              {t("backupInProgress", lang)}
+            </Text>
+          </View>
+        </View>
+      )}
     </>
   );
 }

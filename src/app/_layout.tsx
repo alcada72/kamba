@@ -11,8 +11,9 @@ import { Suspense, useEffect, useState } from "react";
 import { Image, Text, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import "./global.css";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
-/* GoogleSignin.configure({
+GoogleSignin.configure({
   webClientId:
     "898877283535-ibbhnhkgrbomi4mvh2tq08cfqu3m2a62.apps.googleusercontent.com",
   iosClientId:
@@ -21,7 +22,7 @@ import "./global.css";
     "https://www.googleapis.com/auth/drive.appdata",
     "https://www.googleapis.com/auth/gmail.send",
   ],
-}); */
+});
 
 export default function RootLayout() {
   const { isLogged, isTrunckedApp } = useAuthState();

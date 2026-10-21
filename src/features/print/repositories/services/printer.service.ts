@@ -1,7 +1,8 @@
-import { DadosFatura, IPrint } from "../../types";
+import type { DadosFatura, IPrint } from "../../types";
+
 
 export class PrinterService<TPrinter> {
-  constructor(private readonly iPrint: IPrint<TPrinter>) {}
+  constructor(private readonly iPrint: IPrint<TPrinter>) { }
 
   public async print(data: DadosFatura, device: TPrinter): Promise<void> {
     if (!device) {
@@ -16,7 +17,7 @@ export class PrinterService<TPrinter> {
       throw new Error("O total da fatura é inválido.");
     }
 
-    await this.iPrint.print(data, device);
+    await this.iPrint.print(data, undefined, device);
   }
 
   public async findAllPrinters(): Promise<TPrinter[]> {

@@ -7,6 +7,14 @@ import { findBackup } from "./services/findBackup.service";
 import { updateBackup } from "./services/updateBackup.service";
 const googleAuth = new GoogleAuthAdapter();
 export class GoogleDriveAdapter implements BackupAdapter {
+  async getLastBackupDate(userId: string): Promise<Date | null> {
+    const accessToken = await googleAuth.getAccessToken();
+
+    const backup = await findBackup(accessToken);
+
+    return backup ? new Date(backup.modifiedTime) : null;
+  }
+
   async upload(userId: string = "", data: string): Promise<void> {
     const accessToken = await googleAuth.getAccessToken();
 

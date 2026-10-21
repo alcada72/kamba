@@ -47,7 +47,7 @@ export const ListProdutsCart = ({
 
             <Text className="mt-1 text-center text-sm text-textSecondary">
               {lang === "pt"
-                ? "Leia um código de barras para adicionar um produto."
+                ? "Leia um código de barras ou pesquise para adicionar um produto."
                 : "Scan a barcode to add a product."}
             </Text>
           </View>

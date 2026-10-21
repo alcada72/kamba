@@ -6,6 +6,8 @@ export interface BackupAdapter {
   exists(userId: string): Promise<boolean>;
 
   delete(userId: string): Promise<void>;
+
+  getLastBackupDate(userId: string): Promise<Date | null>;
 }
 
 export type TBackupRow = Record<string, unknown>;

@@ -24,7 +24,7 @@ export type DadosFatura = {
 export interface IPrint<IPrinter> {
   print(
     data: DadosFatura,
-    enterpise: Empresa,
+    enterpise: Empresa | undefined,
     printer: IPrinter,
   ): Promise<void>;
   findAllDevicesPrint(): Promise<IPrinter[]>;

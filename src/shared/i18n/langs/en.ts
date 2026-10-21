@@ -78,15 +78,17 @@ const en = {
   // Backup
   backupSalesTitle: "Sales data backup",
   backupSalesDescription:
-    "Back up your sales and media files to prevent data loss.",
+    "Back up your sales to prevent data loss.",
 
   backupNow: "Back up now",
-  lastBackup: "Last backup: today, 03:42",
+  lastBackup: "Last backup: ",
 
   backupSettings: "Settings",
   automaticBackup: "Automatic backup",
   automaticBackupDescription: "Back up your data daily",
-
+  backupInProgress: "Backup in progress...",
+  backupCompleted: "Backup completed successfully.",
+  backupFailed: "Backup failed. Please try again.",
   frequency: "Frequency",
   daily: "Daily",
 
