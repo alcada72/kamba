@@ -27,3 +27,10 @@ export type TBackup = {
     empresa: TBackupRow[];
   };
 };
+
+export type BackupSettings = {
+  enabled: boolean;
+  frequency: "daily" | "weekly" | "monthly";
+  lastBackupAt: string | null;
+  nextBackupAt: string | null;
+};

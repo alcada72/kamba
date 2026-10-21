@@ -2,7 +2,7 @@ import { SQLiteDatabase } from "expo-sqlite";
 import { CreateProductDTO, Product, UpdateProductDTO } from "../types/product";
 
 export class ProductRepository {
-  constructor(private readonly db: SQLiteDatabase) {}
+  constructor(private readonly db: SQLiteDatabase) { }
 
   async create(data: CreateProductDTO): Promise<number> {
     if (!data.nome.trim()) {
@@ -62,6 +62,19 @@ export class ProductRepository {
         WHERE ativo = 1
         ORDER BY nome ASC
       `,
+    );
+  }
+
+  async findWithLimit(limit: number): Promise<Product[]> {
+    return await this.db.getAllAsync<Product>(
+      `
+        SELECT *
+        FROM produtos
+        WHERE ativo = 1
+        ORDER BY nome ASC
+        LIMIT ?
+      `,
+      [limit],
     );
   }
 

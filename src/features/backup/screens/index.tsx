@@ -4,7 +4,14 @@ import colors from "@/theme/colos";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
-import { ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  Switch,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import { useEffect, useState } from "react";
 import { GoogleDriveAdapter } from "../adapters/googleAdapter/googleDriveAdater";
@@ -18,6 +25,7 @@ export default function BackupScreen() {
   const db = useSQLiteContext();
   const [lastBeckupDate, setlastBeckupDate] = useState<Date | null>(null);
   const [isBeckuping, setisBeckuping] = useState(false);
+  const [isLoading, setisLoading] = useState(false);
 
   const backupRepositories = new BackupRepositories(db);
 
@@ -26,11 +34,14 @@ export default function BackupScreen() {
   }, []);
 
   const loadLastBackupDate = async () => {
+    setisLoading(true);
     try {
       const lastBackup = await backupService.getLastBackup("google_drive");
       setlastBeckupDate(lastBackup);
     } catch (error) {
       console.log(error);
+    } finally {
+      setisLoading(false);
     }
   };
 
@@ -92,7 +103,7 @@ export default function BackupScreen() {
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={handleMakeBackup}
-            disabled={isBeckuping}
+            disabled={isBeckuping || isLoading}
             className="flex-row items-center px-4 py-4"
           >
             <View className="mr-4 h-11 w-11 items-center justify-center rounded-full bg-primary/10">
@@ -108,9 +119,16 @@ export default function BackupScreen() {
                 {t("lastBackup", lang)}{" "}
                 {lastBeckupDate
                   ? lastBeckupDate.toLocaleString()
-                  : "Nenhum backup realizado"}
+                  : isLoading || "Nenhum backup realizado"}
               </Text>
             </View>
+            {isLoading && (
+              <ActivityIndicator
+                size="small"
+                color={colors.green700}
+                className="mt-2"
+              />
+            )}
 
             <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
           </TouchableOpacity>
@@ -172,11 +190,11 @@ export default function BackupScreen() {
         </View>
 
         {/* Armazenamento */}
-        <Text className="mb-2 ml-5 mt-7 text-sm font-medium uppercase text-primary">
+        <Text className="mb-2 hidden ml-5 mt-7 text-sm font-medium uppercase text-primary">
           {t("storage", lang)}
         </Text>
 
-        <View className="mx-4 overflow-hidden rounded-2xl bg-card">
+        <View className="mx-4 hidden overflow-hidden rounded-2xl bg-card">
           <TouchableOpacity
             activeOpacity={0.7}
             className="flex-row items-center px-4 py-4"

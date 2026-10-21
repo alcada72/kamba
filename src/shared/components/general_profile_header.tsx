@@ -86,8 +86,8 @@ export const GeneralProfileHeader = ({ user }: Props) => {
           {user?.photo ? (
             <Image
               source={{ uri: user?.photo }}
-              width={200}
-              height={200}
+              width={700}
+              height={700}
               resizeMode="cover"
               className="bg-gray-400 size-full rounded-full"
             />

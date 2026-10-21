@@ -37,10 +37,6 @@ export default function ListProdutCart({
             {product.name}
           </Text>
 
-          <Text className="mt-1 text-xs text-textMuted">
-            {product.barcode ?? "-"}
-          </Text>
-
           <Text className="mt-1 text-sm text-textSecondary">
             {product.quantity} × {formatCurrency(product.price)}
           </Text>

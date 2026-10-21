@@ -8,9 +8,12 @@ import {
   View,
 } from "react-native";
 
+import { GeneralButton } from "@/shared/components/button";
+import { GeneralHeader } from "@/shared/components/general_header";
 import { t } from "@/shared/i18n";
 import { useLanguageStore } from "@/store/i18n.store";
 import colors from "@/theme/colos";
+import { Feather } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
 import { ThermalPrinterDevice } from "react-native-thermal-pos-printer";
 import { ThermalPosPrinterAdapter } from "../repositories/adpters/thermalPosPrinterAdapter";
@@ -101,15 +104,28 @@ export default function PrintersScreen() {
   return (
     <View className="flex-1 bg-background">
       {/* Header */}
-      <View className="border-b border-gray-200 bg-primary px-5 pb-4 pt-5">
-        <Text className="text-xl font-bold text-secondary">
-          {t("Print", lang)}
-        </Text>
 
-        <Text className="mt-1 text-sm text-gray-500">
-          {t("SelectPrinter", lang)}
-        </Text>
-      </View>
+      <GeneralHeader>
+        <View className="flex-row items-center justify-between mr-2">
+          <View className="border-b bg-primary ">
+            <Text className="text-xl font-bold text-secondary">
+              {t("Print", lang)}
+            </Text>
+
+            <Text className="mt-1 text-sm text-gray-500">
+              {t("SelectPrinter", lang)}
+            </Text>
+          </View>
+          <TouchableOpacity>
+            <Feather
+              name="refresh-cw"
+              size={24}
+              color={colors.secondary}
+              onPress={loadPrinters}
+            />
+          </TouchableOpacity>
+        </View>
+      </GeneralHeader>
 
       <View className="flex-1 p-4">
         {loading ? (
@@ -185,28 +201,13 @@ export default function PrintersScreen() {
         )}
 
         {/* Print button */}
-        <TouchableOpacity
+
+        <GeneralButton
+          label={printing ? t("Printing", lang) : t("Print", lang)}
           onPress={printFatura}
           disabled={!selectedPrinter || printing}
-          activeOpacity={0.8}
-          className={`mt-4 items-center rounded-2xl p-4 ${
-            selectedPrinter && !printing ? "bg-primary" : "bg-gray-300"
-          }`}
-        >
-          {printing ? (
-            <View className="flex-row items-center">
-              <ActivityIndicator size="small" color={colors.blue} />
-
-              <Text className="ml-2 text-base font-bold text-white">
-                {t("Printing", lang)}
-              </Text>
-            </View>
-          ) : (
-            <Text className="text-base font-bold text-white">
-              {t("Print", lang)}
-            </Text>
-          )}
-        </TouchableOpacity>
+          isLoading={printing}
+        />
       </View>
     </View>
   );

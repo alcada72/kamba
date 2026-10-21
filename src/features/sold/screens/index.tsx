@@ -489,7 +489,9 @@ export default function SoldScreen() {
       <SearchProdutsModal
         visible={showModal}
         onClose={() => setShowModal(false)}
-        selectProduct={(product) => handleSelectProduct(product)}
+        selectProduct={(product) =>
+          product.forEach((p) => handleSelectProduct(p))
+        }
         setisSarching={() => {
           setShowModal(false);
           setisSarching(false);
