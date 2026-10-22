@@ -16,7 +16,7 @@ import { t } from "@/shared/i18n";
 import { useLanguageStore } from "@/store/i18n.store";
 
 import { LoandingModal } from "@/shared/components/loading-modal";
-import colors from "@/theme/colos";
+import colors from "@/theme/colors";
 import { useSQLiteContext } from "expo-sqlite";
 import { BarcodeScannerModal } from "../components/BarcodeScannerModal";
 import { SectionTitle } from "../components/SectionTitle";

@@ -1,4 +1,4 @@
-import colors from "@/theme/colos";
+import colors from "@/theme/colors";
 import {
   ActivityIndicator,
   Pressable,

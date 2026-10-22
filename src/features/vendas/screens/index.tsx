@@ -1,7 +1,7 @@
 import { RecentSale } from "@/features/home/repositories/dashboardRepository";
 import { t } from "@/shared/i18n";
 import { useLanguageStore } from "@/store/i18n.store";
-import colors from "@/theme/colos";
+import colors from "@/theme/colors";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";

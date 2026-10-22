@@ -1,4 +1,4 @@
-import colors from "@/theme/colos";
+import colors from "@/theme/colors";
 import React from "react";
 import { ActivityIndicator, Modal, View } from "react-native";
 

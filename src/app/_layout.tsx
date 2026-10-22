@@ -3,7 +3,8 @@ import { useAuthState } from "@/features/auth/store/auth.store";
 import { useBackupStore } from "@/features/backup/store/backup.store";
 import { assetsPath } from "@/shared/assets";
 import { hydrateStores } from "@/shared/helpers/hydrateStores";
-import colors from "@/theme/colos";
+import colors from "@/theme/colors";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { router, Stack, usePathname, useSegments } from "expo-router";
 import { SQLiteProvider } from "expo-sqlite";
 import { StatusBar } from "expo-status-bar";
@@ -11,7 +12,6 @@ import { Suspense, useEffect, useState } from "react";
 import { Image, Text, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import "./global.css";
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 GoogleSignin.configure({
   webClientId:

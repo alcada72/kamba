@@ -3,7 +3,7 @@ import { User } from "@/features/user/types/user";
 import { GeneralProfileHeader } from "@/shared/components/general_profile_header";
 import { t } from "@/shared/i18n";
 import { useLanguageStore } from "@/store/i18n.store";
-import colors from "@/theme/colos";
+import colors from "@/theme/colors";
 import Constants from "expo-constants";
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useEffect, useState } from "react";

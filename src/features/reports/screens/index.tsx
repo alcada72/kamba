@@ -2,7 +2,7 @@ import { GeneralHeader } from "@/shared/components/general_header";
 import formatCurrency from "@/shared/format-currecy";
 import { t } from "@/shared/i18n";
 import { useLanguageStore } from "@/store/i18n.store";
-import colors from "@/theme/colos";
+import colors from "@/theme/colors";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";

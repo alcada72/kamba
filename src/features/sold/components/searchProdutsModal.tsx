@@ -1,7 +1,7 @@
 import { ProductRepository } from "@/features/produtcs/repositories/productRepository";
 import { Product } from "@/features/produtcs/types/product";
 import { useLanguageStore } from "@/store/i18n.store";
-import colors from "@/theme/colos";
+import colors from "@/theme/colors";
 import { Feather } from "@expo/vector-icons";
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useEffect, useMemo, useState } from "react";

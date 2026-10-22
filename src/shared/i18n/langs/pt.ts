@@ -16,6 +16,17 @@ const pt: i18nType = {
   TryAgain: "Tentar Novamente",
   sale: "Venda",
   statusSale: "Status da venda",
+  contentBlocked: "Conteúdo bloqueado",
+  pleaseClickForTermination: "Por favor, clique para terminar .",
+  blockedFeature: "Este recurso está bloqueado.",
+  blockedFeatureDescription:
+    "Este recurso está atualmente bloqueado. Por favor, entre em contato com o suporte para mais informações.",
+  blockedFeatureDescriptionAboutNoConfigProfile:
+    "Termine a configuração do seu perfil para desbloquear este recurso.",
+  blockedFeatureDescriptionAboutNoConfigEnterprise:
+    "Termine a configuração da sua empresa para desbloquear este recurso.",
+  blockedFeatureDescriptionAboutNoConfigEnterpriseAndProfile:
+    "Termine a configuração do seu perfil e da sua empresa para desbloquear este recurso.",
   newSale: "Nova venda",
   newProduct: "Novo Produto",
   products: "Produtos",

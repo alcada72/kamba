@@ -3,7 +3,7 @@ import { assetsPath } from "@/shared/assets";
 import { LoandingModal } from "@/shared/components/loading-modal";
 import { t } from "@/shared/i18n";
 import { useLanguageStore } from "@/store/i18n.store";
-import colors from "@/theme/colos";
+import colors from "@/theme/colors";
 import { FontAwesome } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";

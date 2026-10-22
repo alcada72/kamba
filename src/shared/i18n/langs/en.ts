@@ -27,6 +27,17 @@ const en = {
   summary: "Summary",
   todaysSales: "Today's sales",
   recentSales: "Recent sales",
+  contentBlocked: "Content blocked",
+  pleaseClickForTermination: "Please click for termination.",
+  blockedFeature: "This feature is blocked.",
+  blockedFeatureDescription:
+    "This feature is currently blocked. Please contact support for more information.",
+  blockedFeatureDescriptionAboutNoConfigProfile:
+    "Complete your profile setup to unlock this feature.",
+  blockedFeatureDescriptionAboutNoConfigEnterprise:
+    "Complete your enterprise setup to unlock this feature.",
+  blockedFeatureDescriptionAboutNoConfigEnterpriseAndProfile:
+    "Complete both your profile and enterprise setup to unlock this feature.",
   viewAll: "View all",
   noSalesYet: "No sales yet",
   recentSalesDescription: "Your recent sales will appear here.",

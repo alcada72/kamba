@@ -1,7 +1,7 @@
 import formatCurrency from "@/shared/format-currecy";
 import { t } from "@/shared/i18n";
 import { useLanguageStore } from "@/store/i18n.store";
-import colors from "@/theme/colos";
+import colors from "@/theme/colors";
 import { Feather } from "@expo/vector-icons";
 import React from "react";
 import { Pressable, Text, TouchableOpacity, View } from "react-native";
@@ -22,7 +22,7 @@ export default function ListProdutCart({
   showBorder,
   addQtd,
   rmQtd,
-}: Props) {
+}: Readonly<Props>) {
   const lang = useLanguageStore((state) => state.lang);
 
   return (

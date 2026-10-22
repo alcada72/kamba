@@ -1,5 +1,5 @@
 import { assetsPath } from "@/shared/assets";
-import colors from "@/theme/colos";
+import colors from "@/theme/colors";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";

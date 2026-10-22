@@ -8,7 +8,7 @@ import { FaturaRepository } from "@/features/faturas/repository/faturaRepository
 import { DadosFatura } from "@/features/print/types";
 import { ProductRepository } from "@/features/produtcs/repositories/productRepository";
 import { Product } from "@/features/produtcs/types/product";
-import colors from "@/theme/colos";
+import colors from "@/theme/colors";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { ListProdutsCart } from "../components/list-produts";

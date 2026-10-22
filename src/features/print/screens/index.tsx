@@ -12,7 +12,7 @@ import { GeneralButton } from "@/shared/components/button";
 import { GeneralHeader } from "@/shared/components/general_header";
 import { t } from "@/shared/i18n";
 import { useLanguageStore } from "@/store/i18n.store";
-import colors from "@/theme/colos";
+import colors from "@/theme/colors";
 import { Feather } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
 import { ThermalPrinterDevice } from "react-native-thermal-pos-printer";

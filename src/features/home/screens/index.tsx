@@ -18,6 +18,7 @@ import { useSQLiteContext } from "expo-sqlite";
 
 import { UserRepository } from "@/features/user/repositories/userrepositories";
 import { User } from "@/features/user/types/user";
+import { BannerInfo } from "@/shared/components/banner-info";
 import formatCurrency from "@/shared/format-currecy";
 import { FastAcessItem } from "../components/falstAcess-item";
 import { HomeHeader } from "../components/header";
@@ -83,6 +84,12 @@ export default function HomeScreen() {
         contentContainerClassName="px-5 pb-10"
         overScrollMode="never"
       >
+        <View className="mt-6">
+          <BannerInfo
+            info={t("contentBlocked", lang)}
+            description={t("pleaseClickForTermination", lang)}
+          />
+        </View>
         <View className="mt-8">
           <Text className="mb-4 text-xl font-bold text-text">
             {t("quickAccess", lang)}
@@ -105,6 +112,7 @@ export default function HomeScreen() {
               icon="users"
               label={t("customers", lang)}
               onPress={() => console.log("Clientes")}
+              blocked={true}
             />
 
             <FastAcessItem
@@ -143,7 +151,6 @@ export default function HomeScreen() {
               </View>
 
               {/* PRODUTOS */}
-
               <View className="flex-1 rounded-2xl bg-secondary p-4">
                 <Text className="text-sm text-primary/70">
                   {t("products", lang)}

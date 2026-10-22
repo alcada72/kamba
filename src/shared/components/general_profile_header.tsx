@@ -3,7 +3,7 @@ import { useBackupStore } from "@/features/backup/store/backup.store";
 import { User } from "@/features/user/types/user";
 import { t } from "@/shared/i18n";
 import { useLanguageStore } from "@/store/i18n.store";
-import colors from "@/theme/colos";
+import colors from "@/theme/colors";
 import { Feather, FontAwesome } from "@expo/vector-icons";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { router } from "expo-router";

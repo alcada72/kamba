@@ -1,4 +1,4 @@
-import colors from "@/theme/colos";
+import colors from "@/theme/colors";
 import { Feather } from "@expo/vector-icons";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import React, { useEffect, useState } from "react";

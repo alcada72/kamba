@@ -6,7 +6,7 @@ import { DadosFatura } from "@/features/print/types";
 import { Input } from "@/shared/components/input";
 import blobToBase64 from "@/shared/helpers/blobtoBase64";
 import isValidEmail from "@/shared/helpers/validEmail";
-import colors from "@/theme/colos";
+import colors from "@/theme/colors";
 import { Feather } from "@expo/vector-icons";
 import { useSQLiteContext } from "expo-sqlite";
 import { useState } from "react";

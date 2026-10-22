@@ -1,5 +1,5 @@
 import { useAuthState } from "@/features/auth/store/auth.store";
-import colors from "@/theme/colos";
+import colors from "@/theme/colors";
 import { Stack } from "expo-router";
 import { useEffect, useRef } from "react";
 import { AppState, AppStateStatus } from "react-native";

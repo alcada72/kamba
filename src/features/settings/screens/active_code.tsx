@@ -5,7 +5,7 @@ import { GeneralHeader } from "@/shared/components/general_header";
 import { KeysBoardComponent, PIN_LENGTH } from "@/shared/components/keysBoards";
 import { t } from "@/shared/i18n";
 import { useLanguageStore } from "@/store/i18n.store";
-import colors from "@/theme/colos";
+import colors from "@/theme/colors";
 import { router } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";

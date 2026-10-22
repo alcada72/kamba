@@ -1,4 +1,4 @@
-import colors from "@/theme/colos";
+import colors from "@/theme/colors";
 import { Feather } from "@expo/vector-icons";
 import { Pressable, Text, View } from "react-native";
 

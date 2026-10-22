@@ -1,5 +1,5 @@
 import { langs, t } from "@/shared/i18n";
-import colors from "@/theme/colos";
+import colors from "@/theme/colors";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { Pressable, Text, TextInput, View } from "react-native";

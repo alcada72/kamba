@@ -1,6 +1,6 @@
 import { Product } from "@/features/produtcs/types/product";
 import formatCurrency from "@/shared/format-currecy";
-import colors from "@/theme/colos";
+import colors from "@/theme/colors";
 import { Feather } from "@expo/vector-icons";
 import { Pressable, Text, View } from "react-native";
 

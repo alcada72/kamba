@@ -1,4 +1,4 @@
-import colors from "@/theme/colos";
+import colors from "@/theme/colors";
 import { Stack } from "expo-router";
 
 export default function AuthLayout() {
