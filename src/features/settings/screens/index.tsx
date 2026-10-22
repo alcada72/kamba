@@ -99,13 +99,6 @@ export default function SettingsScreen() {
 
           <NavigationCard
             colorIcon={colors.error}
-            icon="info"
-            label="security"
-            link={"/(private)/settings/backup/restore"}
-          />
-
-          <NavigationCard
-            colorIcon={colors.error}
             icon="git-pull-request"
             label="security"
             link={"/(private)/settings/security"}

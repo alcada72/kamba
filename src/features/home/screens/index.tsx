@@ -1,7 +1,7 @@
 import { t } from "@/shared/i18n";
 import { useLanguageStore } from "@/store/i18n.store";
 import { router, useFocusEffect } from "expo-router";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -16,6 +16,7 @@ import {
 } from "@/features/home/repositories/dashboardRepository";
 import { useSQLiteContext } from "expo-sqlite";
 
+import EnterpriseRepository from "@/features/enterprise/repositories/enterpriseRepository";
 import { UserRepository } from "@/features/user/repositories/userrepositories";
 import { User } from "@/features/user/types/user";
 import { BannerInfo } from "@/shared/components/banner-info";
@@ -29,8 +30,14 @@ export default function HomeScreen() {
 
   const db = useSQLiteContext();
 
-  const dashboardRepository = new DashboardRepository(db);
-  const userRepository = new UserRepository(db);
+  const dashboardRepository = useMemo(() => new DashboardRepository(db), [db]);
+
+  const userRepository = useMemo(() => new UserRepository(db), [db]);
+
+  const enterpriseRepository = useMemo(
+    () => new EnterpriseRepository(db),
+    [db],
+  );
 
   const [todaySalesTotal, setTodaySalesTotal] = useState(0);
 
@@ -41,6 +48,8 @@ export default function HomeScreen() {
   const [userData, setUserData] = useState<User | null>(null);
 
   const [recentSales, setRecentSales] = useState<RecentSale[]>([]);
+
+  const [blockedFeature, setBlockedFeature] = useState(false);
 
   const [loading, setLoading] = useState(true);
 
@@ -54,10 +63,11 @@ export default function HomeScreen() {
     try {
       setLoading(true);
 
-      const [summary, sales, user] = await Promise.all([
+      const [summary, sales, user, enterprise] = await Promise.all([
         dashboardRepository.getSummary(),
         dashboardRepository.getRecentSales(15),
         userRepository.getFrist(1),
+        enterpriseRepository.getById(1),
       ]);
 
       setTodaySalesTotal(summary.todaySalesTotal);
@@ -68,6 +78,18 @@ export default function HomeScreen() {
 
       setUserData(user);
       setRecentSales(sales);
+
+      const isEnterpriseIncomplete =
+        !enterprise?.nome?.trim() ||
+        !enterprise?.nif?.trim() ||
+        !enterprise?.telefone?.trim() ||
+        !enterprise?.endereco?.trim();
+
+      setBlockedFeature(
+        isEnterpriseIncomplete ||
+          !user?.nome?.trim() ||
+          !user?.telefone?.trim(),
+      );
     } catch (error) {
       console.error("Erro ao carregar dashboard:", error);
     } finally {
@@ -84,15 +106,18 @@ export default function HomeScreen() {
         contentContainerClassName="px-5 pb-10"
         overScrollMode="never"
       >
-        <View className="mt-6">
-          <BannerInfo
-            info={t("contentBlocked", lang)}
-            description={t("pleaseClickForTermination", lang)}
-          />
-        </View>
+        {blockedFeature && (
+          <View className="mt-6">
+            <BannerInfo
+              info={t("contentBlocked", lang)}
+              description={t("pleaseClickForTermination", lang)}
+              onPress={() => router.navigate("/(private)/profile/enterprise")}
+            />
+          </View>
+        )}
         <View className="mt-8">
           <Text className="mb-4 text-xl font-bold text-text">
-            {t("quickAccess", lang)}
+            {t("quickAccess", lang)} {blockedFeature}
           </Text>
 
           <View className="flex-row flex-wrap items-center gap-2">
@@ -100,25 +125,30 @@ export default function HomeScreen() {
               icon="shopping-cart"
               label={t("newSale", lang)}
               onPress={() => router.push("/(private)/sold")}
+              blocked={blockedFeature}
             />
 
             <FastAcessItem
               icon="package"
               label={t("products", lang)}
               onPress={() => router.push("/(private)/produtcs")}
+              blocked={blockedFeature}
             />
 
+            {/*
             <FastAcessItem
               icon="users"
               label={t("customers", lang)}
               onPress={() => console.log("Clientes")}
-              blocked={true}
+              blocked={blockedFeature}
             />
+            */}
 
             <FastAcessItem
               icon="bar-chart-2"
               label={t("reports", lang)}
               onPress={() => router.navigate("/(private)/reports")}
+              blocked={blockedFeature}
             />
           </View>
         </View>

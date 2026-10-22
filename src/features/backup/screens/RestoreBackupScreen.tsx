@@ -10,8 +10,11 @@ import {
 } from "react-native";
 
 import { InfoRow } from "@/features/backup/components/infoRow";
+import { GeneralButton } from "@/shared/components/button";
 import formatDate from "@/shared/formate-date";
 import getErrorMessage from "@/shared/helpers/getErroMessage";
+import { t } from "@/shared/i18n";
+import { useLanguageStore } from "@/store/i18n.store";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { GoogleDriveAdapter } from "../adapters/googleAdapter/googleDriveAdater";
@@ -22,7 +25,7 @@ import { TBackup } from "../types/backup";
 
 export default function RestoreBackupScreen() {
   const db = useSQLiteContext();
-
+  const lang = useLanguageStore((state) => state.lang);
   const [backup, setBackup] = useState<TBackup | null>(null);
 
   const [backupJson, setBackupJson] = useState<string | null>(null);
@@ -41,12 +44,7 @@ export default function RestoreBackupScreen() {
       const json = await backupService.restore("google_drive");
 
       if (!json) {
-        Alert.alert(
-          "Backup não encontrado",
-          "Não foi encontrado nenhum backup para este usuário.",
-        );
-        setDownloadBackupIsCompleted(true);
-        router.replace("/(private)");
+        Alert.alert(t("backupFileNotFound", lang), t("backupNotFound", lang));
         return;
       }
 
@@ -120,6 +118,29 @@ export default function RestoreBackupScreen() {
     }
   }
 
+  const handleIgnoreBackup = () => {
+    Alert.alert(
+      t("ignore", lang),
+      t("ignoreBackupConfirmation", lang),
+      [
+        {
+          text: t("cancel", lang),
+          style: "cancel",
+        },
+        {
+          text: t("confirm", lang),
+          style: "destructive",
+          onPress: () => {
+            setBackup(null);
+            setBackupJson(null);
+            setDownloadBackupIsCompleted(true);
+            router.replace("/(private)");
+          },
+        },
+      ],
+      { cancelable: true },
+    );
+  };
   const totalRecords = backup ? getTotalRecords(backup) : 0;
 
   return (
@@ -131,22 +152,17 @@ export default function RestoreBackupScreen() {
       >
         <View className="mb-5">
           <Text className="mb-2 text-[28px] font-bold text-slate-900">
-            Restaurar backup
-          </Text>
-
-          <Text className="text-[15px] leading-[22px] text-slate-500">
-            Recupere os dados armazenados no Google Drive.
+            {t("restoreBackup", lang)}
           </Text>
         </View>
 
         <View className="mb-5 rounded-xl border border-orange-200 bg-orange-50 p-4">
           <Text className="mb-1.5 text-base font-bold text-orange-700">
-            Atenção
+            {t("warning", lang)}
           </Text>
 
           <Text className="text-sm leading-5 text-orange-800">
-            A restauração substituirá os dados atuais do aplicativo pelos dados
-            armazenados no backup.
+            {t("restoreBackupDescription", lang)}
           </Text>
         </View>
 
@@ -154,18 +170,25 @@ export default function RestoreBackupScreen() {
           <Pressable
             className={`min-h-[52px] items-center justify-center rounded-xl bg-primary px-5 ${
               loading ? "opacity-60" : ""
-            }`}
+            } disabled:opacity-60 `}
             onPress={handleLoadBackup}
-            // disabled={loading || restoring}
+            disabled={loading || restoring}
           >
             {loading ? (
               <ActivityIndicator color="#fff" />
             ) : (
               <Text className="text-base font-bold text-white">
-                Buscar backup no Google Drive
+                {t("loadBackup", lang)}
               </Text>
             )}
           </Pressable>
+        )}
+        {!backup && (
+          <GeneralButton
+            variant="outline"
+            label={t("ignore", lang)}
+            onPress={handleIgnoreBackup}
+          />
         )}
 
         {backup && (
@@ -173,7 +196,7 @@ export default function RestoreBackupScreen() {
             <View className="mb-4 rounded-2xl border border-slate-200 bg-white p-[18px]">
               <View className="mb-4 flex-row items-center justify-between">
                 <Text className="text-lg font-bold text-slate-900">
-                  Backup encontrado
+                  {t("backupFound", lang)}
                 </Text>
 
                 <View className="rounded-full bg-green-100 px-2.5 py-1">
@@ -195,7 +218,7 @@ export default function RestoreBackupScreen() {
 
             <View className="mb-4 rounded-2xl border border-slate-200 bg-white p-[18px]">
               <Text className="mb-2 text-base font-bold text-slate-900">
-                Dados do backup
+                {t("backupData", lang)}
               </Text>
 
               <InfoRow
@@ -235,7 +258,7 @@ export default function RestoreBackupScreen() {
             </View>
 
             <Pressable
-              className={`min-h-[52px] flex-row items-center justify-center gap-2 rounded-xl bg-red-600 px-5 ${
+              className={`min-h-[52px] flex-row items-center justify-center gap-2 rounded-xl bg-red-600 px-5 disabled:opacity-60 ${
                 restoring ? "opacity-60" : ""
               }`}
               onPress={handleRestore}
@@ -246,12 +269,12 @@ export default function RestoreBackupScreen() {
                   <ActivityIndicator color="#fff" />
 
                   <Text className="text-base font-bold text-white">
-                    Restaurando...
+                    {t("restoringBackup", lang)}
                   </Text>
                 </>
               ) : (
                 <Text className="text-base font-bold text-white">
-                  Restaurar backup
+                  {t("restoreBackup", lang)}
                 </Text>
               )}
             </Pressable>
@@ -265,7 +288,7 @@ export default function RestoreBackupScreen() {
                 }}
               >
                 <Text className="text-[15px] font-semibold text-blue-600">
-                  Buscar novamente
+                  {t("TryAgain", lang)}
                 </Text>
               </Pressable>
             )}

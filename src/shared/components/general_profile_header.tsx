@@ -69,7 +69,10 @@ export const GeneralProfileHeader = ({ user }: Props) => {
                 {t("logout", lang)}
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity className="px-2 border-b border-b-primary">
+            <TouchableOpacity
+              onPress={() => router.navigate("/(private)/profile/edit")}
+              className="px-2 border-b border-b-primary"
+            >
               <Text className="text-lg font-medium text-gray-700">
                 {t("editProfile", lang)}
               </Text>
@@ -103,11 +106,6 @@ export const GeneralProfileHeader = ({ user }: Props) => {
           {user?.email && (
             <Text className="text-xl text-center text-gold-50 font-medium">
               {user?.email}
-            </Text>
-          )}
-          {user?.telefone && (
-            <Text className="text-xl text-center text-gold-50 font-medium">
-              {user?.telefone}
             </Text>
           )}
         </View>

@@ -13,11 +13,12 @@ const pt: i18nType = {
   menu: "Menu",
   newSold: "Nova venda",
   quickAccess: "Acesso rápido",
+  CompanyNotFound: "Empresa não encontrada",
   TryAgain: "Tentar Novamente",
   sale: "Venda",
   statusSale: "Status da venda",
-  contentBlocked: "Conteúdo bloqueado",
-  pleaseClickForTermination: "Por favor, clique para terminar .",
+  contentBlocked: "Conteúdos bloqueados",
+  pleaseClickForTermination: "Por favor, clique para terminar a configuração.",
   blockedFeature: "Este recurso está bloqueado.",
   blockedFeatureDescription:
     "Este recurso está atualmente bloqueado. Por favor, entre em contato com o suporte para mais informações.",
@@ -106,12 +107,24 @@ const pt: i18nType = {
 
   includeVideos: "Incluir vídeos",
   includeVideosDescription: "Os vídeos podem aumentar o tamanho do backup",
+  ignoreBackupConfirmation:
+    "Tem certeza de que deseja ignorar o backup? Esta ação não pode ser desfeita.",
 
   storage: "Armazenamento",
   backupSize: "Tamanho do backup",
 
   backupSecurity:
     "Os seus backups podem ser protegidos com encriptação de ponta a ponta. Apenas você poderá aceder ao conteúdo do backup.",
+  restoreBackup: "Restaurar backup",
+  restoreBackupDescription:
+    "Restaurar um backup irá sobrescrever os seus dados atuais. Por favor, prossiga com cautela.",
+  loadBackup: "Carregar backup",
+  backupFileNotFound: "Arquivo de backup não encontrado",
+  backupNotFound: "Nenhum backup foi encontrado para este usuário.",
+  backupData: "Dados do backup",
+  backupFound: "Backup encontrado",
+  restoringBackup: "Restaurando backup...",
+
 
   // Acções
   save: "Guardar",
@@ -178,6 +191,8 @@ const pt: i18nType = {
   pending: "Pendente",
   completed: "Concluído",
   cancelled: "Cancelado",
+  ignored: "Ignorado",
+  ignore: "Ignorar",
 
   today: "Hoje",
   yesterday: "Ontem",

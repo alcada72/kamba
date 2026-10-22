@@ -40,7 +40,7 @@ export class ExpoPrintAdapter implements IPrint<null> {
 
       await Sharing.shareAsync(uri, {
         mimeType: "application/pdf",
-        dialogTitle: "Partilhar A Fatura de Compra",
+        dialogTitle: "Partilhar Fatura de Compra",
         UTI: "com.adobe.pdf",
       });
     } catch (error) {

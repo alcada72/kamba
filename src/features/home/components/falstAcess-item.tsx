@@ -17,46 +17,68 @@ export function FastAcessItem({
   icon,
   label,
   onPress,
-  blocked,
+  blocked = false,
   info,
 }: Readonly<Props>) {
   const lang = useLanguageStore((state) => state.lang);
 
   const handlePress = () => {
-    console.log("Clicou");
-
     if (blocked) {
       Alert.alert(
         t("blockedFeature", lang),
         info || t("blockedFeatureDescription", lang),
         [{ text: t("confirm", lang) }],
       );
-    } else {
-      onPress?.();
+      return;
     }
+
+    onPress?.();
   };
 
   return (
-    <Pressable onPress={handlePress} className={`active:opacity-70 w-28  `}>
-      <View className="items-center rounded-2xl bg-surface p-4">
-        <View className="h-12 w-12 items-center justify-center rounded-xl bg-green-50">
-          <Feather name={icon} size={24} color={colors.primary} />
-        </View>
+    <Pressable
+      onPress={handlePress}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityHint={
+        blocked ? t("blockedFeatureDescription", lang) : undefined
+      }
+      className="w-28 active:opacity-70"
+    >
+      {({ pressed }) => (
+        <View
+          className={`relative items-center overflow-hidden rounded-2xl border p-4 ${
+            blocked
+              ? "border-border bg-surface"
+              : "border-transparent bg-surface"
+          }`}
+          style={{
+            opacity: pressed ? 0.8 : 1,
+          }}
+        >
+          <View className="h-12 w-12 items-center justify-center rounded-xl bg-green-50">
+            <Feather name={icon} size={24} color={colors.primary} />
+          </View>
 
-        <Text
-          numberOfLines={1}
-          className="mt-2 text-center text-sm font-semibold text-text"
-        >
-          {label}
-        </Text>
-      </View>
-      {blocked && (
-        <Pressable
-          onPress={handlePress}
-          className="absolute z-10 inset-0 bg-black/50 items-center justify-center rounded-2xl"
-        >
-          <Ionicons name="lock-closed" size={50} color={colors.white} />
-        </Pressable>
+          <Text
+            numberOfLines={2}
+            className="mt-2 text-center text-sm font-semibold leading-5 text-text"
+          >
+            {label}
+          </Text>
+
+          {blocked && (
+            <View className="absolute inset-0 items-center justify-center rounded-2xl bg-black/55">
+              <View className="h-10 w-10 items-center justify-center rounded-full bg-black/30">
+                <Ionicons name="lock-closed" size={22} color={colors.white} />
+              </View>
+
+              <Text className="mt-1 text-xs text-center font-semibold text-white">
+                {t("blockedFeature", lang)}
+              </Text>
+            </View>
+          )}
+        </View>
       )}
     </Pressable>
   );

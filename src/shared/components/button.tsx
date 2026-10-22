@@ -31,7 +31,11 @@ export const GeneralButton = ({
       {isLoading ? (
         <ActivityIndicator size={"large"} color={colors.border} />
       ) : (
-        <Text className="font-bold text-white">{label}</Text>
+        <Text
+          className={`font-bold  ${variant === "outline" ? "text-gray-700" : "text-white"}`}
+        >
+          {label}
+        </Text>
       )}
     </Pressable>
   );

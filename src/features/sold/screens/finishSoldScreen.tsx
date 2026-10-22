@@ -9,9 +9,10 @@ import colors from "@/theme/colors";
 import { Feather } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -29,13 +30,14 @@ export default function FinishSoldScree() {
   const { lang } = useLanguageStore();
   const db = useSQLiteContext();
 
-  const faturaRepository = new FaturaRepository(db);
+  const faturaRepository = useMemo(() => new FaturaRepository(db), [db]);
 
-  const enteproiseRepository = new EnterpriseRepository(db);
+  const enteproiseRepository = useMemo(
+    () => new EnterpriseRepository(db),
+    [db],
+  );
 
   useEffect(() => {
-    console.log("Id da factura", id);
-
     loadFaturaData();
   }, [id]);
 
@@ -62,7 +64,10 @@ export default function FinishSoldScree() {
 
     try {
       const company = await enteproiseRepository.getById();
-      if (!company) return;
+      if (!company) {
+        Alert.alert(t("error", lang), t("CompanyNotFound", lang));
+        return;
+      }
 
       await expoPrintAdapter.share(fatura.fatura_json, company);
     } catch (error) {

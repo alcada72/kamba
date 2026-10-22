@@ -12,18 +12,24 @@ export const BannerInfo = ({ description, info, onPress }: Props) => {
   const isInteractive = Boolean(onPress);
 
   return (
-    <View className="w-full overflow-hidden rounded-2xl bg-primary">
-      <View className="flex-row items-center px-4 py-5">
-        {/* Icon */}
-        <View className="mr-4 h-12 w-12 items-center justify-center rounded-2xl bg-secondary/15">
-          <Feather name="info" size={23} color={colors.secondary} />
+    <Pressable
+      onPress={onPress}
+      disabled={!isInteractive}
+      accessibilityRole={isInteractive ? "button" : undefined}
+      accessibilityLabel={isInteractive ? `Ver detalhes: ${info}` : undefined}
+      className={`w-full overflow-hidden rounded-2xl bg-primary ${
+        isInteractive ? "active:opacity-80" : ""
+      }`}
+    >
+      <View className="flex-row items-center px-4 py-4">
+        <View className="mr-4 h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-secondary/15">
+          <Feather name="info" size={22} color={colors.secondary} />
         </View>
 
-        {/* Content */}
-        <View className="flex-1 justify-center pr-3">
+        <View className="flex-1 justify-center">
           <Text
             numberOfLines={2}
-            className="text-lg font-semibold text-secondary"
+            className="text-base font-semibold leading-6 text-secondary"
           >
             {info}
           </Text>
@@ -38,19 +44,12 @@ export const BannerInfo = ({ description, info, onPress }: Props) => {
           )}
         </View>
 
-        {/* Action */}
         {isInteractive && (
-          <Pressable
-            onPress={onPress}
-            accessibilityRole="button"
-            accessibilityLabel={`Ver detalhes: ${info}`}
-            className="h-11 w-11 items-center justify-center rounded-full bg-secondary/15 active:opacity-60"
-            hitSlop={8}
-          >
-            <Feather name="arrow-up-right" size={21} color={colors.secondary} />
-          </Pressable>
+          <View className="ml-3 h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary/15">
+            <Feather name="arrow-up-right" size={20} color={colors.secondary} />
+          </View>
         )}
       </View>
-    </View>
+    </Pressable>
   );
 };

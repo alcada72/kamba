@@ -12,6 +12,7 @@ const en = {
   menu: "Menu",
   newSold: "New Sold",
   quickAccess: "Quick access",
+  CompanyNotFound: "Company not found",
   invoiceNumber: "Invoice Number",
   TryAgain: "Try again",
   invoice: "Invoice",
@@ -102,7 +103,16 @@ const en = {
   backupFailed: "Backup failed. Please try again.",
   frequency: "Frequency",
   daily: "Daily",
-
+  restoreBackup: "Restore backup",
+  restoreBackupDescription:
+    "Restoring a backup will overwrite your current data. Please proceed with caution.",
+  loadBackup: "Load backup",
+  backupFileNotFound: "Backup file not found",
+  backupNotFound: "No backup was found for this user.",
+  backupData: "Backup data",
+  backupFound: "Backup found",
+  restoringBackup: "Restoring backup...",
+  ignoreBackupConfirmation: "Are you sure you want to ignore the backup? This action cannot be undone.",
   includeVideos: "Include videos",
   includeVideosDescription: "Videos may increase the size of your backup",
 
@@ -178,6 +188,8 @@ const en = {
   pending: "Pending",
   completed: "Completed",
   cancelled: "Cancelled",
+  ignored: "Ignored",
+  ignore: "Ignore",
 
   // Time
   today: "Today",
